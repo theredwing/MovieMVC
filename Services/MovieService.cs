@@ -91,6 +91,11 @@ namespace MovieMVC.Services
             return _repository.GetAllCategories();
         }
 
+        public async Task MergeNamesAsync(int targetId, List<int> sourceIds)
+        {
+            await _repository.MergeNamesAsync(targetId, sourceIds);
+        }
+
         private async Task AddPeopleByRole(Movie movie, string positionName, int[]? selectedIds)
         {
             if (selectedIds == null || selectedIds.Length == 0) return;

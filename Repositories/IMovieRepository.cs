@@ -15,6 +15,7 @@ namespace MovieMVC.Repositories
         void AddCategory(MovieCategory category);
         void RemoveCategories(IEnumerable<MovieCategory> categories);
         Task SaveChangesAsync();
+        Task MergeNamesAsync(int targetId, List<int> sourceIds);
         List<NamesLU> GetAllNames();
         List<CategoryLU> GetAllCategories();
     }

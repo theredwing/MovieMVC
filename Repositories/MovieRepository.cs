@@ -78,6 +78,41 @@ namespace MovieMVC.Repositories
             await _context.SaveChangesAsync();
         }
 
+        public async Task MergeNamesAsync(int targetId, List<int> sourceIds)
+        {
+            foreach (var sourceId in sourceIds)
+            {
+                var sourceRecords = await _context.MoviePeople
+                    .Where(mp => mp.NamesId == sourceId)
+                    .ToListAsync();
+
+                foreach (var record in sourceRecords)
+                {
+                    var duplicate = await _context.MoviePeople
+                        .AnyAsync(mp => mp.MovieId == record.MovieId
+                            && mp.NamesId == targetId
+                            && mp.PositionId == record.PositionId);
+
+                    if (duplicate)
+                    {
+                        _context.MoviePeople.Remove(record);
+                    }
+                    else
+                    {
+                        record.NamesId = targetId;
+                    }
+                }
+
+                var sourceName = await _context.Actors.FindAsync(sourceId);
+                if (sourceName != null)
+                {
+                    _context.Actors.Remove(sourceName);
+                }
+            }
+
+            await _context.SaveChangesAsync();
+        }
+
         public List<NamesLU> GetAllNames()
         {
             return _context.Actors.OrderBy(n => n.Name).ToList();

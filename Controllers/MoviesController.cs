@@ -91,6 +91,51 @@ public class MoviesController : Controller
         return RedirectToAction("Index", "Home", new { sort, desc, search });
     }
 
+    public IActionResult MergeNames()
+    {
+        TempData["SuccessMessage"] = null;
+        return View (new MergeNamesViewModel
+        {
+            Names = new SelectList(_movieService.GetAllNames(), "Id", "Name")
+        });
+    }
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> MergeNames(int targetId, int sourceId2, int? sourceId3,
+        int? sourceId4, int? sourceId5, int? sourceId6, string? sort, bool? desc, string? search)
+    {
+        if (targetId == 0 || sourceId2 == 0)
+        {
+            ModelState.AddModelError("", "Correct Name and Merge Name 2 are required.");
+            return View(new MergeNamesViewModel
+            {
+                Names = new SelectList(_movieService.GetAllNames(), "Id", "Name")
+            });
+        }
+
+        var sourceIds = new List<int> { sourceId2 };
+        if (sourceId3 is > 0) sourceIds.Add(sourceId3.Value);
+        if (sourceId4 is > 0) sourceIds.Add(sourceId4.Value);
+        if (sourceId5 is > 0) sourceIds.Add(sourceId5.Value);
+        if (sourceId6 is > 0) sourceIds.Add(sourceId6.Value);
+
+        sourceIds = sourceIds.Where(id => id != targetId).Distinct().ToList();
+
+        if (sourceIds.Count == 0)
+        {
+            ModelState.AddModelError("", "At least one merge name must differ from the correct name.");
+            return View(new MergeNamesViewModel
+            {
+                Names = new SelectList(_movieService.GetAllNames(), "Id", "Name")
+            });
+        }
+
+        await _movieService.MergeNamesAsync(targetId, sourceIds);
+        TempData["SuccessMessage"] = "Names merged successfully";
+        return RedirectToAction("Index","Home",new { sort,desc,search });
+    }
+
     private MovieFormViewModel BuildFormViewModel(Movie movie,
         int[]? selectedDirectorIds = null, int[]? selectedProducerIds = null,
         int[]? selectedWriterIds = null, int[]? selectedActorIds = null,

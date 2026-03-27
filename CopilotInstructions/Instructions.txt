@@ -45,3 +45,13 @@ If you want, I can:
 •	or produce a zip / scaffold the project with exact contents for each file.
 Which would you prefer?
 
+======================================================
+Create MergeNames.cshtml under Views/Movies.  View to have 6 dropdown lists for selecting  a single actor and a submit button.  
+On submit, the selected actor names for dropdown lists 2-6 (Only 2 and 3 are required) will have their data merged with the 
+first dropdown list's selected actor name which will have the correct name for the mergings. 
+For example, if the first dropdown has "Brad Pitt" selected and the second dropdown has "Brad Pitts" selected, and the third dropdown has 
+"Brad Pittsburgh" selected, the merged actor name would be "Brad Pitt".  The Brad Pitt record will have it's Id referenced so that the 
+Brad Pitts and Brad Pittsburgh records will be merged into the Brad Pitt record.  Any place in MovieNamesPosition where the Brad Pitts and 
+Brad Pittsburgh records are referenced will be updated to reference the Brad Pitt record.  The Brad Pitts and Brad Pittsburgh records 
+will then be deleted from the database.  For example, Brad Pitt has one movie, Brad Pitts has two movies, and Brad Pittsburgh has three movies. 
+After the merge, Brad Pitt will have six movies, and the Brad Pitts and Brad Pittsburgh records will be deleted.

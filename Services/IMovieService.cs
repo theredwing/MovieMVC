@@ -10,6 +10,7 @@ namespace MovieMVC.Services
         Task CreateMovieAsync(Movie movie, int[]? selectedDirectors, int[]? selectedProducers, int[]? selectedWriters, int[]? selectedActors, int[]? selectedCategories);
         Task<Movie?> UpdateMovieAsync(int id, Movie updatedMovie, int[]? selectedDirectors, int[]? selectedProducers, int[]? selectedWriters, int[]? selectedActors, int[]? selectedCategories);
         Task<bool> DeleteMovieAsync(int id);
+        Task MergeNamesAsync(int targetId, List<int> sourceIds);
         List<NamesLU> GetAllNames();
         List<CategoryLU> GetAllCategories();
     }

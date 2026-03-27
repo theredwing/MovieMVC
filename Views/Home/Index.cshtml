@@ -23,6 +23,7 @@ Index.cshtml basic structure:
     <br />
     <div class="mb-3">
         <a class="btn btn-success" href="/Movies/Create?sort=@Model.CurrentSort&desc=@(!Model.NextSort)&search=@Model.Search">Add Movie</a>
+        <a class="btn btn-success" href="/Movies/MergeNames?sort=@Model.CurrentSort&desc=@(!Model.NextSort)&search=@Model.Search">Merge Names</a>
     </div>
 
     <table class="table table-striped">
