@@ -1,0 +1,59 @@
+﻿@model MovieMVC.Models.ViewModels.MovieIndexViewModel
+@* •	Provide links to ?sort=title, ?sort=year etc.
+•	Render table with Title, Year, Director, Category, Actors and action links to Details, Edit, Delete.
+ *@
+@* Index view (searchable & sortable grid)
+•	Use querystring parameters search and sort.
+•	Provide links to ?sort=title, ?sort=year etc.
+•	Render table with Title, Year, Director, Category, Actors and action links to Details, Edit, Delete.
+Index.cshtml basic structure:
+ *@
+@{
+    ViewData["Title"] = "Home Page";
+}
+
+<div class="text-center">
+    <h1 class="display-4">Alex's Movies</h1>
+    <p>All the ones he has seen</p>
+
+    <form method="get">
+        <input name="search" value="@Model.Search" />
+        <button>Search</button>
+    </form>
+    <br />
+    <div class="mb-3">
+        <a class="btn btn-success" href="/Movies/Create?sort=@Model.CurrentSort&desc=@(!Model.NextSort)&search=@Model.Search">Add Movie</a>
+    </div>
+
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th><a href="?sort=title&desc=@Model.NextSort&search=@Model.Search">Title</a></th>
+                <th>Actors</th>
+                <th><a href="?sort=director&desc=@Model.NextSort&search=@Model.Search">Directors</a></th>
+                <th><a href="?sort=writer&desc=@Model.NextSort&search=@Model.Search">Writers</a></th>
+                <th>Producers</th>
+                <th>Categories</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var vm in Model.Movies)
+            {
+                <tr>
+                    <td>@vm.MovieDto?.Title</td>
+                    <td>@string.Join(", ", vm.MovieDto?.Actors ?? [])</td>
+                    <td>@string.Join(", ", vm.MovieDto?.Directors ?? [])</td>
+                    <td>@string.Join(", ", vm.MovieDto?.Writers ?? [])</td>
+                    <td>@string.Join(", ", vm.MovieDto?.Producers ?? [])</td>
+                    <td>@string.Join(", ", vm.MovieDto?.Categories ?? [])</td>
+                    <td>
+                        <a class="btn btn-sm btn-outline-primary" href="/Movies/Details/@vm.Movie.Id?sort=@Model.CurrentSort&desc=@(!Model.NextSort)&search=@Model.Search">View</a>
+                        <a class="btn btn-sm btn-outline-secondary" href="/Movies/Edit/@vm.Movie.Id?sort=@Model.CurrentSort&desc=@(!Model.NextSort)&search=@Model.Search">Edit</a>
+                        <a class="btn btn-sm btn-outline-danger" href="/Movies/Delete/@vm.Movie.Id?sort=@Model.CurrentSort&desc=@(!Model.NextSort)&search=@Model.Search">Delete</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

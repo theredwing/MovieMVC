@@ -1,0 +1,47 @@
+﻿GitHub Copilot
+Below is a concise design + implementation plan you can drop into an ASP.NET Core MVC project. It includes the essential models, DbContext, controller actions, and Razor view snippets required so movies can be created (with director/category dropdowns and actor multi-select), saved, and listed in a searchable/sortable grid with view/edit/delete links.
+Files (high level)
+•	MovieMvc.csproj (regular ASP.NET Core MVC project + EF Core package)
+•	Program.cs (register MVC + DbContext + seeder)
+•	Data/AppDbContext.cs
+•	Data/DbSeeder.cs
+•	Models/Movie.cs, Models/Actor.cs, Models/Director.cs, Models/Category.cs, Models/MovieActor.cs
+•	Controllers/MoviesController.cs
+•	Views: Views/Movies/Index.cshtml, Create.cshtml, Edit.cshtml, Details.cshtml, Delete.cshtml
+•	Layout and _ViewImports.cshtml
+Key model definitions
+•	Movie (Id, Title, Year, DirectorId, CategoryId, navigation properties, List<MovieActor>)
+•	Actor (Id, Name, List<MovieActor>)
+•	Director, Category (Id, Name)
+•	MovieActor (composite key MovieId+NamesLUID; Movie and Actor navigation)
+Example model (concise) Models/Movie.cs
+==================================================
+
+Controller: Controllers/MoviesController.cs (important methods)
+•	Index(string? search, string sort = "title") — include related data, apply search and sort, return list to view.
+•	Create() GET — populate ViewBag.Directors, ViewBag.Categories, ViewBag.Actors (as MultiSelectList).
+•	Create(Movie movie, int[]? selectedActors) POST — save movie, add MovieActor rows.
+•	Edit(int id) GET — load movie with MoviePeople, populate selections with selected actor ids.
+•	Edit(int id, Movie updatedMovie, int[]? selectedActors) POST — update movie fields and replace actor links.
+•	Details(int id) and Delete/DeleteConfirmed as standard.
+====================================================
+private void PopulateSelections(int[]? selectedActorIds = null) {
+    ViewBag.Directors = new SelectList(_db.Directors.OrderBy(d => d.Name), "Id", "Name");
+    ViewBag.Categories = new SelectList(_db.Categories.OrderBy(c => c.Name), "Id", "Name");
+    ViewBag.Actors = new MultiSelectList(_db.Actors.OrderBy(a => a.Name), "Id", "Name", selectedActorIds);
+}
+
+======================================================
+
+Seeder
+•	Add a simple DbSeeder.Seed(AppDbContext) to insert sample Directors, Categories, Actors, one sample Movie and MovieActor links.
+Notes / choices
+•	I used InMemory for simplicity; swap to SQL Server by changing the UseInMemoryDatabase call and adding EF Core SQL package for persistence.
+•	MovieActor is the join table to support multiple actors per movie.
+•	For large datasets consider server-side paging or a JS grid library (DataTables, Grid.js) for client-side search/sort.
+•	Multi-select UX: use a JS multi-select control if you want nicer UI (Select2, Bootstrap-select).
+If you want, I can:
+•	generate the full file tree with complete files ready to paste,
+•	or produce a zip / scaffold the project with exact contents for each file.
+Which would you prefer?
+
