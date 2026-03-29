@@ -4,6 +4,7 @@
     ViewData["Title"] = "Merge Names";
 }
 
+<div class="movie-page home-header">
 <h2>Merge Names</h2>
 <p>Select the correct name in the first dropdown. Names selected in dropdowns 2–6 will have their movie references merged into the correct name, then be deleted.</p>
 
@@ -58,5 +59,5 @@
     </div>
 
     <button type="submit" class="btn btn-danger">Merge</button>
-    <a class="btn btn-outline-secondary" href="/Home?sort=@Context.Request.Query["sort"]&desc=@Context.Request.Query["desc"]&search=@Context.Request.Query["search"]">Back to List</a>
+    <a class="btn btn-secondary" href="/Home?sort=@Context.Request.Query["sort"]&desc=@Context.Request.Query["desc"]&search=@Context.Request.Query["search"]">Back to List</a>
 </form>

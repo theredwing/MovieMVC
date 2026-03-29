@@ -4,6 +4,7 @@
     ViewData["Title"] = "Details";
 }
 
+<div class="movie-page home-header">
 <h2>@Model.Title</h2>
 
 <div>
@@ -42,6 +43,5 @@
 </div>
 
 <div>
-    <a class="btn btn-outline-secondary" href="/Movies/Edit/@Model.Id?sort=@Context.Request.Query["sort"]&desc=@Context.Request.Query["desc"]&search=@Context.Request.Query["search"]">Edit</a>
-    <a class="btn btn-outline-primary" href="/Home?sort=@Context.Request.Query["sort"]&desc=@Context.Request.Query["desc"]&search=@Context.Request.Query["search"]">Back to List</a>
-</div>
+    <a class="btn btn-secondary" href="/Movies/Edit/@Model.Id?sort=@Context.Request.Query["sort"]&desc=@Context.Request.Query["desc"]&search=@Context.Request.Query["search"]">Edit</a>
+    <a class="btn btn-primary" href="/Home?sort=@Context.Request.Query["sort"]&desc=@Context.Request.Query["desc"]&search=@Context.Request.Query["search"]">Back to List</a>

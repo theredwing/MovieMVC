@@ -19,6 +19,9 @@ html {
 
 body {
   margin-bottom: 60px;
+  background-image: url('../Images/GuideForPopcornTime.jpg');
+  background-repeat: repeat;
+  background-size: auto;
 }
 
 .form-floating > .form-control-plaintext::placeholder, .form-floating > .form-control::placeholder {
@@ -32,4 +35,22 @@ body {
 
 .form-select[multiple] {
   min-height: 25rem;
+}
+
+.movie-page .form-label,
+.movie-page dt {
+  color: white;
+  font-weight: bold;
+}
+
+.movie-page dd {
+  color: #90EE90;
+  font-weight: bold;
+}
+
+.home-header h1,
+.home-header h2,
+.home-header p {
+  color: yellow;
+  font-weight: bold;
 }
