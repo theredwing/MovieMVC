@@ -136,6 +136,54 @@ public class MoviesController : Controller
         return RedirectToAction("Index","Home",new { sort,desc,search });
     }
 
+    public IActionResult Names(string? sort,bool? desc,string? search)
+    {
+        return View(_movieService.GetAllNames());
+    }
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> AddName(string name,string? sort,bool? desc,string? search)
+    {
+        if (!string.IsNullOrWhiteSpace(name))
+        {
+            await _movieService.AddNameAsync(new NamesLU { Name = name.Trim() });
+            TempData["SuccessMessage"] = $"'{name.Trim()}' added successfully.";
+        }
+        return RedirectToAction(nameof(Names), new { sort,desc,search });
+    }
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> EditName(int id, string name,string? sort,bool? desc,string? search)
+    {
+        if (string.IsNullOrWhiteSpace(name))
+        {
+            TempData["ErrorMessage"] = "Name cannot be empty.";
+            return RedirectToAction(nameof(Names));
+        }
+
+        var existing = await _movieService.GetNameByIdAsync(id);
+        if (existing == null) return NotFound();
+
+        existing.Name = name.Trim();
+        await _movieService.UpdateNameAsync(existing);
+        TempData["SuccessMessage"] = $"Name updated to '{name.Trim()}' successfully.";
+        return RedirectToAction(nameof(Names),new { sort,desc,search });
+    }
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> DeleteName(int id,string? sort,bool? desc,string? search)
+    {
+        var nameEntry = await _movieService.GetNameByIdAsync(id);
+        var deleted = await _movieService.DeleteNameAsync(id);
+        if (!deleted) return NotFound();
+
+        TempData["SuccessMessage"] = $"'{nameEntry?.Name}' deleted successfully.";
+        return RedirectToAction(nameof(Names),new { sort,desc,search });
+    }
+
     private MovieFormViewModel BuildFormViewModel(Movie movie,
         int[]? selectedDirectorIds = null, int[]? selectedProducerIds = null,
         int[]? selectedWriterIds = null, int[]? selectedActorIds = null,

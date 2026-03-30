@@ -96,6 +96,26 @@ namespace MovieMVC.Services
             await _repository.MergeNamesAsync(targetId, sourceIds);
         }
 
+        public async Task<NamesLU?> GetNameByIdAsync(int id)
+        {
+            return await _repository.GetNameByIdAsync(id);
+        }
+
+        public async Task AddNameAsync(NamesLU name)
+        {
+            await _repository.AddNameAsync(name);
+        }
+
+        public async Task UpdateNameAsync(NamesLU name)
+        {
+            await _repository.UpdateNameAsync(name);
+        }
+
+        public async Task<bool> DeleteNameAsync(int id)
+        {
+            return await _repository.DeleteNameAsync(id);
+        }
+
         private async Task AddPeopleByRole(Movie movie, string positionName, int[]? selectedIds)
         {
             if (selectedIds == null || selectedIds.Length == 0) return;

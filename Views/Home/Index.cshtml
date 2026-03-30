@@ -17,13 +17,26 @@ Index.cshtml basic structure:
     <p>All the ones he has seen</p>
 
     <form method="get">
-        <input name="search" value="@Model.Search" />
+        <input id="searchBox" name="search" value="@Model.Search" autocomplete="off" />
         <button>Search</button>
     </form>
     <br />
     <div class="mb-3">
-        <a class="btn btn-success" href="/Movies/Create?sort=@Model.CurrentSort&desc=@(!Model.NextSort)&search=@Model.Search">Add Movie</a>
-        <a class="btn btn-success" href="/Movies/MergeNames?sort=@Model.CurrentSort&desc=@(!Model.NextSort)&search=@Model.Search">Merge Names</a>
+        <table>
+            <tr>
+                <td>
+                    <a class="btn btn-success" href="/Movies/Create?sort=@Model.CurrentSort&desc=@(!Model.NextSort)&search=@Model.Search">Add Movie</a>
+                </td>
+                <td width="5"></td>
+                <td>
+                    <a class="btn btn-success" href="/Movies/Names?sort=@Model.CurrentSort&desc=@(!Model.NextSort)&search=@Model.Search">Names Maintenance</a>
+                </td>
+                <td width="5"></td>
+                <td>
+                    <a class="btn btn-success" href="/Movies/MergeNames?sort=@Model.CurrentSort&desc=@(!Model.NextSort)&search=@Model.Search">Merge Names</a>
+                </td>
+            </tr>
+        </table>
     </div>
 
     <table class="table table-striped">

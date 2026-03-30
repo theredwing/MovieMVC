@@ -50,7 +50,51 @@ body {
 
 .home-header h1,
 .home-header h2,
+.home-header h4,
 .home-header p {
-  color: yellow;
-  font-weight: bold;
+    color: yellow;
+    font-weight: bold;
+}
+
+.footer {
+  color: white;
+}
+
+.footer a {
+  color: lightblue;
+}
+
+.home-header .table-striped > tbody > tr:nth-of-type(odd) > * {
+  --bs-table-bg-type: lavender;
+}
+
+.home-header .table-striped > tbody > tr:nth-of-type(even) > * {
+  --bs-table-bg-type: #FFDAB9;
+}
+
+.home-header .table {
+  border: 3px inset #aaa;
+}
+
+.home-header .table-striped > tbody > tr.search-highlight > * {
+  --bs-table-bg-type: #FFFF99;
+}
+
+.movie-page .btn,
+.home-header > .mb-3 .btn {
+  border: 2px outset #aaa;
+}
+
+input[type="text"],
+input[type="search"],
+input[type="number"],
+input[type="email"],
+input[type="password"],
+input[type="date"],
+textarea,
+select,
+.form-control,
+.form-select {
+  border: 2px inset #aaa;
+  background-color: #C8F7C8;
 }

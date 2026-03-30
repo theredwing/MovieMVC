@@ -18,5 +18,9 @@ namespace MovieMVC.Repositories
         Task MergeNamesAsync(int targetId, List<int> sourceIds);
         List<NamesLU> GetAllNames();
         List<CategoryLU> GetAllCategories();
+        Task<NamesLU?> GetNameByIdAsync(int id);
+        Task AddNameAsync(NamesLU name);
+        Task UpdateNameAsync(NamesLU name);
+        Task<bool> DeleteNameAsync(int id);
     }
 }

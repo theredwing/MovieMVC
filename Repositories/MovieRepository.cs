@@ -122,5 +122,37 @@ namespace MovieMVC.Repositories
         {
             return _context.Categories.OrderBy(c => c.Category).ToList();
         }
+
+        public async Task<NamesLU?> GetNameByIdAsync(int id)
+        {
+            return await _context.Actors.FindAsync(id);
+        }
+
+        public async Task AddNameAsync(NamesLU name)
+        {
+            _context.Actors.Add(name);
+            await _context.SaveChangesAsync();
+        }
+
+        public async Task UpdateNameAsync(NamesLU name)
+        {
+            _context.Actors.Update(name);
+            await _context.SaveChangesAsync();
+        }
+
+        public async Task<bool> DeleteNameAsync(int id)
+        {
+            var name = await _context.Actors
+                .Include(n => n.MoviePeople)
+                .FirstOrDefaultAsync(n => n.Id == id);
+            if (name == null) return false;
+
+            if (name.MoviePeople != null && name.MoviePeople.Count > 0)
+                _context.MoviePeople.RemoveRange(name.MoviePeople);
+
+            _context.Actors.Remove(name);
+            await _context.SaveChangesAsync();
+            return true;
+        }
     }
 }
