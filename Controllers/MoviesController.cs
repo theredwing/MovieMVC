@@ -147,6 +147,11 @@ public class MoviesController : Controller
     {
         if (!string.IsNullOrWhiteSpace(name))
         {
+            if (await _movieService.NameExistsAsync(name.Trim()))
+            {
+                TempData["ErrorMessage"] = $"'{name.Trim()}' already exists.";
+                return RedirectToAction(nameof(Names), new { sort, desc, search });
+            }
             await _movieService.AddNameAsync(new NamesLU { Name = name.Trim() });
             TempData["SuccessMessage"] = $"'{name.Trim()}' added successfully.";
         }
@@ -165,6 +170,12 @@ public class MoviesController : Controller
 
         var existing = await _movieService.GetNameByIdAsync(id);
         if (existing == null) return NotFound();
+
+        if (await _movieService.NameExistsAsync(name.Trim(), id))
+        {
+            TempData["ErrorMessage"] = $"'{name.Trim()}' already exists.";
+            return RedirectToAction(nameof(Names), new { sort, desc, search });
+        }
 
         existing.Name = name.Trim();
         await _movieService.UpdateNameAsync(existing);

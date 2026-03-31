@@ -29,6 +29,7 @@
         <button type="button" class="btn btn-primary" onclick="document.getElementById('nameSearchBox').value=''; document.getElementById('nameSearchBox').dispatchEvent(new Event('input'));">Clear</button>
     </div>
 
+    <div id="namesTableContainer" style="max-height: 70vh; overflow-y: auto;">
     <table class="table table-striped">
         <thead>
             <tr>
@@ -58,6 +59,7 @@
             }
         </tbody>
     </table>
+    </div>
 
     <div class="mt-3">
         <a class="btn btn-secondary" href="/Home?sort=@Context.Request.Query["sort"]&desc=@Context.Request.Query["desc"]&search=@Context.Request.Query["search"]">Back to List</a>
@@ -68,19 +70,20 @@
 <script>
     document.getElementById('nameSearchBox').addEventListener('input', function () {
         var text = this.value.toLowerCase();
-        var rows = document.querySelectorAll('.table-striped tbody tr');
-        var prev = document.querySelector('.table-striped tbody tr.search-highlight');
+        var container = document.getElementById('namesTableContainer');
+        var rows = container.querySelectorAll('tbody tr');
+        var prev = container.querySelector('tbody tr.search-highlight');
         if (prev) prev.classList.remove('search-highlight');
 
         if (text.length === 0) return;
 
-        var searchBox = this;
         for (var i = 0; i < rows.length; i++) {
             var nameInput = rows[i].querySelector('td input[name="name"]');
             if (nameInput && nameInput.value.trim().toLowerCase().startsWith(text)) {
                 rows[i].classList.add('search-highlight');
-                rows[i].scrollIntoView({ behavior: 'instant', block: 'center' });
-                searchBox.focus();
+                var containerRect = container.getBoundingClientRect();
+                var rowRect = rows[i].getBoundingClientRect();
+                container.scrollTop += rowRect.top - containerRect.top - (container.clientHeight / 2) + (rows[i].clientHeight / 2);
                 break;
             }
         }

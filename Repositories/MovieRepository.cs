@@ -128,6 +128,12 @@ namespace MovieMVC.Repositories
             return await _context.Actors.FindAsync(id);
         }
 
+        public async Task<bool> NameExistsAsync(string name, int? excludeId = null)
+        {
+            return await _context.Actors
+                .AnyAsync(n => n.Name.ToLower() == name.ToLower() && (!excludeId.HasValue || n.Id != excludeId.Value));
+        }
+
         public async Task AddNameAsync(NamesLU name)
         {
             _context.Actors.Add(name);

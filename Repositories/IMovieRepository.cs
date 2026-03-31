@@ -22,5 +22,6 @@ namespace MovieMVC.Repositories
         Task AddNameAsync(NamesLU name);
         Task UpdateNameAsync(NamesLU name);
         Task<bool> DeleteNameAsync(int id);
+        Task<bool> NameExistsAsync(string name, int? excludeId = null);
     }
 }

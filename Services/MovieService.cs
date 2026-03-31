@@ -101,6 +101,11 @@ namespace MovieMVC.Services
             return await _repository.GetNameByIdAsync(id);
         }
 
+        public async Task<bool> NameExistsAsync(string name, int? excludeId = null)
+        {
+            return await _repository.NameExistsAsync(name, excludeId);
+        }
+
         public async Task AddNameAsync(NamesLU name)
         {
             await _repository.AddNameAsync(name);
