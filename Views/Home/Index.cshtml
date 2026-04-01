@@ -16,6 +16,10 @@ Index.cshtml basic structure:
     <h1 class="display-4">Alex's Movies</h1>
     <p>All the ones he has seen</p>
 
+    @if (TempData["ErrorMessage"] is string errorMsg)
+    {
+        <div class="alert alert-danger">@errorMsg</div>
+    }
     <form method="get">
         <input id="searchBox" name="search" value="@Model.Search" autocomplete="off" />
         <button>Search</button>

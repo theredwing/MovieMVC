@@ -7,6 +7,11 @@
 <div class="movie-page home-header">
 <h2>Edit Movie</h2>
 
+    @if (TempData["ErrorMessage"] is string errorMsg)
+    {
+        <div class="alert alert-danger">@errorMsg</div>
+    }
+
 <form asp-action="Edit" method="post">
     <input type="hidden" asp-for="Movie.Id" />
     <input type="hidden" name="sort" value="@Context.Request.Query["sort"]" />

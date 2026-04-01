@@ -98,3 +98,13 @@ select,
   border: 2px inset #aaa;
   background-color: #C8F7C8;
 }
+
+.movie-page .alert-success {
+  color: #FF2400;
+  font-weight: bold;
+}
+
+.movie-page .text-danger {
+  color: #E88D9C !important;
+  font-weight: bold;
+}

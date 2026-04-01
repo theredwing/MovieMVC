@@ -17,6 +17,7 @@ namespace MovieMVC.Repositories
         Task SaveChangesAsync();
         Task MergeNamesAsync(int targetId, List<int> sourceIds);
         List<NamesLU> GetAllNames();
+        List<NamesLU> GetAllNamesWithMovieCount();
         List<CategoryLU> GetAllCategories();
         Task<NamesLU?> GetNameByIdAsync(int id);
         Task AddNameAsync(NamesLU name);

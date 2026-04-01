@@ -86,6 +86,11 @@ namespace MovieMVC.Services
             return _repository.GetAllNames();
         }
 
+        public List<NamesLU> GetAllNamesWithMovieCount()
+        {
+            return _repository.GetAllNamesWithMovieCount();
+        }
+
         public List<CategoryLU> GetAllCategories()
         {
             return _repository.GetAllCategories();

@@ -14,8 +14,5 @@ namespace MovieMVC.Models.ViewModels
         public IEnumerable<SelectListItem>? Writers { get; set; }
         public IEnumerable<SelectListItem>? Producers { get; set; }
         [Required] public string Title { get; set; }
-
-        public int? DirectorId { get; set; }
-        public int? CategoryId { get; set; }
     }
 }

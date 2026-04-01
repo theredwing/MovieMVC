@@ -118,6 +118,11 @@ namespace MovieMVC.Repositories
             return _context.Actors.OrderBy(n => n.Name).ToList();
         }
 
+        public List<NamesLU> GetAllNamesWithMovieCount()
+        {
+            return _context.Actors.Include(n => n.MoviePeople).OrderBy(n => n.Name).ToList();
+        }
+
         public List<CategoryLU> GetAllCategories()
         {
             return _context.Categories.OrderBy(c => c.Category).ToList();

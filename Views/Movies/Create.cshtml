@@ -7,6 +7,11 @@
 <div class="movie-page home-header">
     <h2>Add Movie</h2>
 
+    @if (TempData["ErrorMessage"] is string errorMsg)
+    {
+        <div class="alert alert-danger">@errorMsg</div>
+    }
+
 <form method="post">
     <input type="hidden" name="sort" value="@Context.Request.Query["sort"]" />
     <input type="hidden" name="desc" value="@Context.Request.Query["desc"]" />

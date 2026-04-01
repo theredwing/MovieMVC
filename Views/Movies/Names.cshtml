@@ -19,6 +19,9 @@
     <div class="mb-4">
         <h4>Add New Name</h4>
         <form method="post" asp-action="AddName" class="d-inline-flex gap-2 align-items-center">
+            <input type="hidden" name="sort" value="@Context.Request.Query["sort"]" />
+            <input type="hidden" name="desc" value="@Context.Request.Query["desc"]" />
+            <input type="hidden" name="search" value="@Context.Request.Query["search"]" />
             <input type="text" name="name" class="form-control" placeholder="Enter name" required style="width: 300px;" />
             <button type="submit" class="btn btn-success">Add</button>
         </form>
@@ -40,20 +43,33 @@
         <tbody>
             @foreach (var nameEntry in Model)
             {
-                <tr>
+                <tr data-id="@nameEntry.Id">
                     <td>
                         <form method="post" asp-action="EditName" class="d-inline-flex gap-2 align-items-center w-100">
+                            <input type="hidden" name="sort" value="@Context.Request.Query["sort"]" />
+                            <input type="hidden" name="desc" value="@Context.Request.Query["desc"]" />
+                            <input type="hidden" name="search" value="@Context.Request.Query["search"]" />
                             <input type="hidden" name="id" value="@nameEntry.Id" />
                             <input type="text" name="name" value="@nameEntry.Name" class="form-control" required />
                             <button type="submit" class="btn btn-sm btn-primary">Save</button>
                         </form>
                     </td>
                     <td>
-                        <form method="post" asp-action="DeleteName" class="d-inline"
-                              onsubmit="return confirm('Are you sure you want to delete \'@nameEntry.Name.Replace("'", "\\'")\'? This will also remove all movie associations for this name.');">
-                            <input type="hidden" name="id" value="@nameEntry.Id" />
-                            <button type="submit" class="btn btn-sm btn-danger">Delete</button>
-                        </form>
+                        @if (nameEntry.MoviePeople != null && nameEntry.MoviePeople.Count > 0)
+                        {
+                            <button type="button" class="btn btn-sm btn-danger" onclick="alert('You cannot delete this Name as it is associated with at least one movie.');">Delete</button>
+                        }
+                        else
+                        {
+                            <form method="post" asp-action="DeleteName" class="d-inline"
+                                  onsubmit="return confirm('Are you sure you want to delete \'@nameEntry.Name.Replace("'", "\\'")\'?');">
+                                <input type="hidden" name="sort" value="@Context.Request.Query["sort"]" />
+                                <input type="hidden" name="desc" value="@Context.Request.Query["desc"]" />
+                                <input type="hidden" name="search" value="@Context.Request.Query["search"]" />
+                                <input type="hidden" name="id" value="@nameEntry.Id" />
+                                <button type="submit" class="btn btn-sm btn-danger">Delete</button>
+                            </form>
+                        }
                     </td>
                 </tr>
             }
@@ -72,21 +88,44 @@
         var text = this.value.toLowerCase();
         var container = document.getElementById('namesTableContainer');
         var rows = container.querySelectorAll('tbody tr');
+        // Remove previous highlighted row
         var prev = container.querySelector('tbody tr.search-highlight');
         if (prev) prev.classList.remove('search-highlight');
-
+        // If search box is empty, don't highlight or scroll
         if (text.length === 0) return;
 
+        // Finds the first row that starts with the search text and highlights it, then scrolls it into view
         for (var i = 0; i < rows.length; i++) {
             var nameInput = rows[i].querySelector('td input[name="name"]');
             if (nameInput && nameInput.value.trim().toLowerCase().startsWith(text)) {
                 rows[i].classList.add('search-highlight');
+                //Calculates the offset to center the matched row within the scrollable #namesTableContainer div, 
+                // then adjusts container.scrollTop accordingly. 
+                // This avoids scrollIntoView(), which caused conflicts with Edge's focus-scroll behavior.
                 var containerRect = container.getBoundingClientRect();
                 var rowRect = rows[i].getBoundingClientRect();
                 container.scrollTop += rowRect.top - containerRect.top - (container.clientHeight / 2) + (rows[i].clientHeight / 2);
+                //stops after the first match.
                 break;
             }
         }
     });
+
+    var focusId = '@(TempData["FocusNameId"])';
+    if (focusId) {
+        var container = document.getElementById('namesTableContainer');
+        var row = container.querySelector('tr[data-id="' + focusId + '"]');
+        if (row) {
+            row.classList.add('search-highlight');
+            var containerRect = container.getBoundingClientRect();
+            var rowRect = row.getBoundingClientRect();
+            container.scrollTop += rowRect.top - containerRect.top - (container.clientHeight / 2) + (row.clientHeight / 2);
+            var nameInput = row.querySelector('input[name="name"]');
+            // calls focus({ preventScroll: true }) on that row's name input so the user can immediately re-edit, 
+            // without the browser fighting the scroll position.
+            //  the page scroll stays put and only the container's internal scroll moves.
+            if (nameInput) nameInput.focus({ preventScroll: true });
+        }
+    }
 </script>
 }
