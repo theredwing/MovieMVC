@@ -161,10 +161,7 @@ public class MoviesController : Controller
         try
         {
             TempData["SuccessMessage"] = null;
-            return View(new MergeNamesViewModel
-            {
-                Names = new SelectList(_movieService.GetAllNames(), "Id", "Name")
-            });
+            return View(BuildMergeNamesViewModel());
         }
         catch (Exception ex)
         {
@@ -182,10 +179,7 @@ public class MoviesController : Controller
         if (targetId == 0 || sourceId2 == 0)
         {
             ModelState.AddModelError("", "Correct Name and Merge Name 2 are required.");
-            return View(new MergeNamesViewModel
-            {
-                Names = new SelectList(_movieService.GetAllNames(), "Id", "Name")
-            });
+            return View(BuildMergeNamesViewModel());
         }
 
         var sourceIds = new List<int> { sourceId2 };
@@ -199,10 +193,7 @@ public class MoviesController : Controller
         if (sourceIds.Count == 0)
         {
             ModelState.AddModelError("", "At least one merge name must differ from the correct name.");
-            return View(new MergeNamesViewModel
-            {
-                Names = new SelectList(_movieService.GetAllNames(), "Id", "Name")
-            });
+            return View(BuildMergeNamesViewModel());
         }
 
         try
@@ -215,10 +206,7 @@ public class MoviesController : Controller
         {
             _logger.LogError(ex, "Error merging names");
             TempData["ErrorMessage"] = $"An error occurred merging names: {ex.Message}";
-            return View(new MergeNamesViewModel
-            {
-                Names = new SelectList(_movieService.GetAllNames(), "Id", "Name")
-            });
+            return View(BuildMergeNamesViewModel());
         }
     }
 
@@ -334,6 +322,14 @@ public class MoviesController : Controller
             Writers = new MultiSelectList(names, "Id", "Name", selectedWriterIds),
             Actors = new MultiSelectList(names, "Id", "Name", selectedActorIds),
             Categories = new MultiSelectList(_movieService.GetAllCategories(), "Id", "Category", selectedCategoryIds)
+        };
+    }
+
+    private MergeNamesViewModel BuildMergeNamesViewModel()
+    {
+        return new MergeNamesViewModel
+        {
+            Names = new SelectList(_movieService.GetAllNames(), "Id", "Name")
         };
     }
 }

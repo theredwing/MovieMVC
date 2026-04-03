@@ -1,0 +1,34 @@
+@model MovieMVC.Models.Movie
+
+<dl class="row">
+    <dt class="col-sm-3">Title</dt>
+    <dd class="col-sm-9">@Model.Title</dd>
+
+    <dt class="col-sm-3">Description</dt>
+    <dd class="col-sm-9">@Model.Description</dd>
+
+    <dt class="col-sm-3">Directors</dt>
+    <dd class="col-sm-9">
+        @string.Join(", ", Model.MoviePeople?.Where(mp => mp.PositionId == 1).Select(mp => mp.Name?.Name) ?? [])
+    </dd>
+
+    <dt class="col-sm-3">Producers</dt>
+    <dd class="col-sm-9">
+        @string.Join(", ", Model.MoviePeople?.Where(mp => mp.PositionId == 2).Select(mp => mp.Name?.Name) ?? [])
+    </dd>
+
+    <dt class="col-sm-3">Writers</dt>
+    <dd class="col-sm-9">
+        @string.Join(", ", Model.MoviePeople?.Where(mp => mp.PositionId == 3).Select(mp => mp.Name?.Name) ?? [])
+    </dd>
+
+    <dt class="col-sm-3">Actors</dt>
+    <dd class="col-sm-9">
+        @string.Join(", ", Model.MoviePeople?.Where(mp => mp.PositionId == 4).Select(mp => mp.Name?.Name) ?? [])
+    </dd>
+
+    <dt class="col-sm-3">Categories</dt>
+    <dd class="col-sm-9">
+        @string.Join(", ", Model.MovieCategory?.Select(mc => mc.Category?.Category) ?? [])
+    </dd>
+</dl>

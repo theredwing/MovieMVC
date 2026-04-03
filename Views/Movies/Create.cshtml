@@ -7,15 +7,10 @@
 <div class="movie-page home-header">
     <h2>Add Movie</h2>
 
-    @if (TempData["ErrorMessage"] is string errorMsg)
-    {
-        <div class="alert alert-danger">@errorMsg</div>
-    }
+    <partial name="_TempMessages" />
 
 <form method="post">
-    <input type="hidden" name="sort" value="@Context.Request.Query["sort"]" />
-    <input type="hidden" name="desc" value="@Context.Request.Query["desc"]" />
-    <input type="hidden" name="search" value="@Context.Request.Query["search"]" />
+    <partial name="_SortSearchHidden" />
 
     <div class="mb-3">
         <label asp-for="Movie.Title" class="form-label"></label>

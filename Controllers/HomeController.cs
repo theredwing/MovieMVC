@@ -22,16 +22,10 @@ namespace MovieMVC.Controllers
             try
             {
                 var dtos = _homeService.GetMovies(search, sort, desc);
-                var viewModels = dtos.Select(d => new MovieCreateViewModel
-                {
-                    Movie = new Movie { Id = d.Id, Title = d.Title ?? "" },
-                    MovieDto = d,
-                    Title = d.Title ?? ""
-                }).ToList();
                 ViewData["Title"] = "Home Page";
                 var indexVm = new MovieIndexViewModel
                 {
-                    Movies = viewModels,
+                    Movies = dtos,
                     CurrentSort = sort,
                     NextSort = !desc,
                     Search = search

@@ -7,21 +7,12 @@
 <div class="movie-page home-header">
     <h2>Names Maintenance</h2>
 
-    @if (TempData["SuccessMessage"] is string successMsg)
-    {
-        <div class="alert alert-success">@successMsg</div>
-    }
-    @if (TempData["ErrorMessage"] is string errorMsg)
-    {
-        <div class="alert alert-danger">@errorMsg</div>
-    }
+    <partial name="_TempMessages" />
 
     <div class="mb-4">
         <h4>Add New Name</h4>
         <form method="post" asp-action="AddName" class="d-inline-flex gap-2 align-items-center">
-            <input type="hidden" name="sort" value="@Context.Request.Query["sort"]" />
-            <input type="hidden" name="desc" value="@Context.Request.Query["desc"]" />
-            <input type="hidden" name="search" value="@Context.Request.Query["search"]" />
+            <partial name="_SortSearchHidden" />
             <input type="text" name="name" class="form-control" placeholder="Enter name" required style="width: 300px;" />
             <button type="submit" class="btn btn-success">Add</button>
         </form>
@@ -46,9 +37,7 @@
                 <tr data-id="@nameEntry.Id">
                     <td>
                         <form method="post" asp-action="EditName" class="d-inline-flex gap-2 align-items-center w-100">
-                            <input type="hidden" name="sort" value="@Context.Request.Query["sort"]" />
-                            <input type="hidden" name="desc" value="@Context.Request.Query["desc"]" />
-                            <input type="hidden" name="search" value="@Context.Request.Query["search"]" />
+                                <partial name="_SortSearchHidden" />
                             <input type="hidden" name="id" value="@nameEntry.Id" />
                             <input type="text" name="name" value="@nameEntry.Name" class="form-control" required />
                             <button type="submit" class="btn btn-sm btn-primary">Save</button>
@@ -63,9 +52,7 @@
                         {
                             <form method="post" asp-action="DeleteName" class="d-inline"
                                   onsubmit="return confirm('Are you sure you want to delete \'@nameEntry.Name.Replace("'", "\\'")\'?');">
-                                <input type="hidden" name="sort" value="@Context.Request.Query["sort"]" />
-                                <input type="hidden" name="desc" value="@Context.Request.Query["desc"]" />
-                                <input type="hidden" name="search" value="@Context.Request.Query["search"]" />
+                                <partial name="_SortSearchHidden" />
                                 <input type="hidden" name="id" value="@nameEntry.Id" />
                                 <button type="submit" class="btn btn-sm btn-danger">Delete</button>
                             </form>

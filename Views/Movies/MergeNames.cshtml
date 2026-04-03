@@ -8,10 +8,7 @@
 <h2>Merge Names</h2>
 <p>Select the correct name in the first dropdown. Names selected in dropdowns 2–6 will have their movie references merged into the correct name, then be deleted.</p>
 
-@if (TempData["SuccessMessage"] is string msg)
-{
-    <div class="alert alert-success">@msg</div>
-}
+<partial name="_TempMessages" />
 
 <div asp-validation-summary="All" class="text-danger"></div>
 

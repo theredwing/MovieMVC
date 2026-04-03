@@ -18,29 +18,20 @@ namespace MovieMVC.Services
         {
             var query = _repository.GetAllWithIncludes(search);
 
+            Expression<Func<Movie, object?>> ByPosition(int positionId) =>
+                m => m.MoviePeople
+                    .Where(mp => mp.PositionId == positionId)
+                    .OrderBy(mp => mp.Name!.Name)
+                    .Select(mp => mp.Name!.Name)
+                    .FirstOrDefault();
+
             Expression<Func<Movie, object?>> keySelector = sort switch
             {
                 "title" => m => m.Title,
-                "director" => m => m.MoviePeople
-                    .Where(mp => mp.PositionId == 1)
-                    .OrderBy(mp => mp.Name!.Name)
-                    .Select(mp => mp.Name!.Name)
-                    .FirstOrDefault(),
-                "producer" => m => m.MoviePeople
-                    .Where(mp => mp.PositionId == 2)
-                    .OrderBy(mp => mp.Name!.Name)
-                    .Select(mp => mp.Name!.Name)
-                    .FirstOrDefault(),
-                "writer" => m => m.MoviePeople
-                    .Where(mp => mp.PositionId == 3)
-                    .OrderBy(mp => mp.Name!.Name)
-                    .Select(mp => mp.Name!.Name)
-                    .FirstOrDefault(),
-                "actor" => m => m.MoviePeople
-                    .Where(mp => mp.PositionId == 4)
-                    .OrderBy(mp => mp.Name!.Name)
-                    .Select(mp => mp.Name!.Name)
-                    .FirstOrDefault(),
+                "director" => ByPosition(1),
+                "producer" => ByPosition(2),
+                "writer" => ByPosition(3),
+                "actor" => ByPosition(4),
                 "category" => m => m.MovieCategory
                     .OrderBy(mc => mc.Category!.Category)
                     .Select(mc => mc.Category!.Category)
