@@ -1,0 +1,166 @@
+@model MovieMVC.Models.ViewModels.GraphViewModel
+@{
+    ViewData["Title"] = "Graphs";
+    var ids = Model.SelectedIds ?? [];
+    var id1 = ids.Length > 0 ? ids[0].ToString() : "";
+    var id2 = ids.Length > 1 ? ids[1].ToString() : "";
+    var id3 = ids.Length > 2 ? ids[2].ToString() : "";
+    var id4 = ids.Length > 3 ? ids[3].ToString() : "";
+    var itemLabel = Model.SelectedType switch
+    {
+        "Categories" => "Category",
+        "Directors" => "Director",
+        "Producers" => "Producer",
+        "Writers" => "Writer",
+        "Actors" => "Actor",
+        _ => "Selection"
+    };
+}
+
+<div class="movie-page home-header">
+<h1>Movie Graphs</h1>
+
+<partial name="_TempMessages" />
+
+<form method="get" asp-action="Index" id="graphForm">
+    <partial name="_SortSearchHidden" />
+    <div class="row mb-3">
+        <div class="col-md-3">
+            <label class="form-label">Select Type</label>
+            <select name="type" id="typeSelect" class="form-select"
+                    onchange="window.location.href='/Graphs?type=' + this.value + '&sort=@(Model.Sort)&desc=@(Model.Desc)&search=@(Model.Search)'">
+                <option value="">-- Choose --</option>
+                <option value="Categories" selected="@(Model.SelectedType == "Categories")">Categories</option>
+                <option value="Directors" selected="@(Model.SelectedType == "Directors")">Directors</option>
+                <option value="Producers" selected="@(Model.SelectedType == "Producers")">Producers</option>
+                <option value="Writers" selected="@(Model.SelectedType == "Writers")">Writers</option>
+                <option value="Actors" selected="@(Model.SelectedType == "Actors")">Actors</option>
+            </select>
+        </div>
+    </div>
+    @if (Model.AvailableItems.Count > 0)
+    {
+        <div class="row mb-3">
+            <div class="col-md-3">
+                <label class="form-label">@itemLabel 1 <span class="text-danger">*</span></label>
+                <select name="ids" class="form-select" required>
+                    <option value="">-- Select --</option>
+                    @foreach (var item in Model.AvailableItems)
+                    {
+                        <option value="@item.Value" selected="@(item.Value == id1)">@item.Text</option>
+                    }
+                </select>
+            </div>
+            <div class="col-md-3">
+                <label class="form-label">@itemLabel 2 <span class="text-danger">*</span></label>
+                <select name="ids" class="form-select" required>
+                    <option value="">-- Select --</option>
+                    @foreach (var item in Model.AvailableItems)
+                    {
+                        <option value="@item.Value" selected="@(item.Value == id2)">@item.Text</option>
+                    }
+                </select>
+            </div>
+            <div class="col-md-3">
+                <label class="form-label">@itemLabel 3</label>
+                <select name="ids" class="form-select">
+                    <option value="">-- None --</option>
+                    @foreach (var item in Model.AvailableItems)
+                    {
+                        <option value="@item.Value" selected="@(item.Value == id3)">@item.Text</option>
+                    }
+                </select>
+            </div>
+            <div class="col-md-3">
+                <label class="form-label">@itemLabel 4</label>
+                <select name="ids" class="form-select">
+                    <option value="">-- None --</option>
+                    @foreach (var item in Model.AvailableItems)
+                    {
+                        <option value="@item.Value" selected="@(item.Value == id4)">@item.Text</option>
+                    }
+                </select>
+            </div>
+        </div>
+        <div class="row mb-3">
+            <div class="col">
+                <button type="submit" class="btn btn-primary">Show Graph</button>
+                <a class="btn btn-secondary" href="/Home?sort=@Model.Sort&desc=@Model.Desc&search=@Model.Search">Back to List</a>
+            </div>
+        </div>
+    }
+</form>
+
+@if (Model.Labels.Count > 0)
+{
+    <div class="movie-graph">
+        <canvas id="movieChart"></canvas>
+    </div>
+}
+
+@section Scripts {
+    <script>
+        document.getElementById('graphForm').addEventListener('submit', function () {
+            document.querySelectorAll('#graphForm select[name="ids"]').forEach(function (s) {
+                if (!s.value) s.removeAttribute('name');
+            });
+        });
+    </script>
+    @if (Model.Labels.Count > 0)
+    {
+        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+        <script>
+            const ctx = document.getElementById('movieChart').getContext('2d');
+            new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.Labels)),
+                    datasets: [{
+                        label: 'Movie Count',
+                        data: @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.Counts)),
+                        backgroundColor: ['#0d6efd', '#198754', '#ffc107', '#dc3545']
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            labels: {
+                                color: 'black',
+                                font: { weight: 'bold' }
+                            }
+                        }
+                    },
+                    scales: {
+                        x: {
+                            ticks: {
+                                color: 'black',
+                                font: { weight: 'bold' }
+                            },
+                            title: {
+                                display: true,
+                                text: '@Model.SelectedType',
+                                color: 'black',
+                                font: { size: 14, weight: 'bold' }
+                            }
+                        },
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                stepSize: 1,
+                                color: 'black',
+                                font: { weight: 'bold' }
+                            },
+                            title: {
+                                display: true,
+                                text: 'Movie Count',
+                                color: 'black',
+                                font: { size: 14, weight: 'bold' }
+                            }
+                        }
+                    }
+                }
+            });
+        </script>
+    }
+}

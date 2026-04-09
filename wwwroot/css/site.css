@@ -1,20 +1,18 @@
+/* ── Custom Properties ── */
+:root {
+  --border-color: #aaa;
+  --input-bg: #C8F7C8;
+}
+
+/* ── Base ── */
 html {
   font-size: 14px;
+  position: relative;
+  min-height: 100%;
 }
 
 @media (min-width: 768px) {
-  html {
-    font-size: 16px;
-  }
-}
-
-.btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
-  box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
-}
-
-html {
-  position: relative;
-  min-height: 100%;
+  html { font-size: 16px; }
 }
 
 body {
@@ -24,12 +22,21 @@ body {
   background-size: auto;
 }
 
-.form-floating > .form-control-plaintext::placeholder, .form-floating > .form-control::placeholder {
+/* ── Focus Ring ── */
+.btn:focus, .btn:active:focus, .btn-link.nav-link:focus,
+.form-control:focus, .form-check-input:focus {
+  box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
+}
+
+/* ── Form Inputs ── */
+.form-floating > .form-control-plaintext::placeholder,
+.form-floating > .form-control::placeholder {
   color: var(--bs-secondary-color);
   text-align: end;
 }
 
-.form-floating > .form-control-plaintext:focus::placeholder, .form-floating > .form-control:focus::placeholder {
+.form-floating > .form-control-plaintext:focus::placeholder,
+.form-floating > .form-control:focus::placeholder {
   text-align: start;
 }
 
@@ -37,74 +44,69 @@ body {
   min-height: 25rem;
 }
 
+input[type="text"], input[type="search"], input[type="number"],
+input[type="email"], input[type="password"], input[type="date"],
+textarea, select, .form-control, .form-select {
+  border: 2px inset var(--border-color);
+  background-color: var(--input-bg);
+}
+
+/* ── Movie Page: bold text (single declaration) ── */
 .movie-page .form-label,
-.movie-page dt {
-  color: white;
-  font-weight: bold;
-}
-
-.movie-page dd {
-  color: #90EE90;
-  font-weight: bold;
-}
-
+.movie-page .movie-graph,
+.movie-page dt,
+.movie-page dd,
+.movie-page .alert-success,
+.movie-page .text-danger,
 .home-header h1,
 .home-header h2,
 .home-header h4,
 .home-header p {
-    color: yellow;
-    font-weight: bold;
+  font-weight: bold;
 }
 
-.footer {
-  color: white;
+/* ── Movie Page: text colors ── */
+.movie-page .form-label,
+.movie-page .movie-graph,
+.movie-page dt          { color: white; }
+.movie-page dd          { color: #90EE90; }
+.movie-page .alert-success { color: #FF2400; }
+.movie-page .text-danger   { color: #E88D9C !important; }
+
+.home-header h1,
+.home-header h2,
+.home-header h4,
+.home-header p { color: yellow; }
+
+/* ── Buttons & Borders ── */
+.movie-page .btn,
+.home-header > .mb-3 .btn {
+  border: 2px outset var(--border-color);
 }
 
-.footer a {
-  color: lightblue;
+/* ── Table Styling ── */
+.home-header .table {
+  border: 3px inset var(--border-color);
 }
 
 .home-header .table-striped > tbody > tr:nth-of-type(odd) > * {
   --bs-table-bg-type: lavender;
 }
-
 .home-header .table-striped > tbody > tr:nth-of-type(even) > * {
   --bs-table-bg-type: #FFDAB9;
 }
-
-.home-header .table {
-  border: 3px inset #aaa;
-}
-
 .home-header .table-striped > tbody > tr.search-highlight > * {
   --bs-table-bg-type: #FFFF99;
 }
 
-.movie-page .btn,
-.home-header > .mb-3 .btn {
-  border: 2px outset #aaa;
-}
+/* ── Footer ── */
+.footer   { color: white; }
+.footer a { color: lightblue; }
 
-input[type="text"],
-input[type="search"],
-input[type="number"],
-input[type="email"],
-input[type="password"],
-input[type="date"],
-textarea,
-select,
-.form-control,
-.form-select {
-  border: 2px inset #aaa;
-  background-color: #C8F7C8;
-}
-
-.movie-page .alert-success {
-  color: #FF2400;
-  font-weight: bold;
-}
-
-.movie-page .text-danger {
-  color: #E88D9C !important;
-  font-weight: bold;
+/* ── Graph ── */
+.movie-graph {
+  max-width: 600px;
+  border: 5px inset;
+  background-color: white;
+  padding: 10px;
 }

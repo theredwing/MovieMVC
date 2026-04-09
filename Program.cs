@@ -15,6 +15,8 @@ builder.Services.AddScoped<IHomeRepository, HomeRepository>();
 builder.Services.AddScoped<IHomeService, HomeService>();
 builder.Services.AddScoped<IMovieRepository, MovieRepository>();
 builder.Services.AddScoped<IMovieService, MovieService>();
+builder.Services.AddScoped<IGraphRepository, GraphRepository>();
+builder.Services.AddScoped<IGraphService, GraphService>();
 
 var app = builder.Build();
 
