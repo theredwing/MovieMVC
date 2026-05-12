@@ -7,6 +7,7 @@ using MovieMVC.Controllers;
 using MovieMVC.Data;
 using MovieMVC.Repositories;
 using MovieMVC.Services;
+using Tests.TestHelpers;
 using Xunit;
 
 namespace Tests.Views.Home
@@ -20,7 +21,8 @@ namespace Tests.Views.Home
                 .Options;
             var context = new AppDbContext(options);
             var repo = new HomeRepository(context);
-            var service = new HomeService(repo);
+            var lookupRepo = new LookupRepository(context);
+            var service = new HomeService(repo, lookupRepo);
             var controller = new HomeController(service, NullLogger<HomeController>.Instance);
             var tempDataProvider = new TestTempDataProvider();
             controller.TempData = new TempDataDictionary(new DefaultHttpContext(), tempDataProvider);

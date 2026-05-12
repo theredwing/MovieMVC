@@ -7,10 +7,12 @@ namespace MovieMVC.Services
     public class MovieService : IMovieService
     {
         private readonly IMovieRepository _repository;
+        private readonly ILookupRepository _lookupRepository;
 
-        public MovieService(IMovieRepository repository)
+        public MovieService(IMovieRepository repository, ILookupRepository lookupRepository)
         {
             _repository = repository;
+            _lookupRepository = lookupRepository;
         }
 
         public async Task<Movie?> GetMovieDetailsAsync(int id)
@@ -20,10 +22,11 @@ namespace MovieMVC.Services
 
         public async Task<MovieSelections> GetSelectedIdsAsync(Movie movie)
         {
-            var directorPosId = await _repository.GetPositionIdAsync("director");
-            var producerPosId = await _repository.GetPositionIdAsync("producer");
-            var writerPosId = await _repository.GetPositionIdAsync("writer");
-            var actorPosId = await _repository.GetPositionIdAsync("actor");
+            var positionIds = await _lookupRepository.GetAllPositionIdsAsync();
+            var directorPosId = positionIds.GetValueOrDefault("director");
+            var producerPosId = positionIds.GetValueOrDefault("producer");
+            var writerPosId = positionIds.GetValueOrDefault("writer");
+            var actorPosId = positionIds.GetValueOrDefault("actor");
 
             return new MovieSelections
             {
@@ -39,10 +42,11 @@ namespace MovieMVC.Services
         {
             _repository.Add(movie);
 
-            await AddPeopleByRole(movie, "director", selectedDirectors);
-            await AddPeopleByRole(movie, "producer", selectedProducers);
-            await AddPeopleByRole(movie, "writer", selectedWriters);
-            await AddPeopleByRole(movie, "actor", selectedActors);
+            var positionIds = await _lookupRepository.GetAllPositionIdsAsync();
+            AddPeopleByRole(movie, positionIds.GetValueOrDefault("director"), selectedDirectors);
+            AddPeopleByRole(movie, positionIds.GetValueOrDefault("producer"), selectedProducers);
+            AddPeopleByRole(movie, positionIds.GetValueOrDefault("writer"), selectedWriters);
+            AddPeopleByRole(movie, positionIds.GetValueOrDefault("actor"), selectedActors);
             AddCategories(movie, selectedCategories);
 
             await _repository.SaveChangesAsync();
@@ -58,10 +62,12 @@ namespace MovieMVC.Services
 
             // replace all people links
             _repository.RemovePeople(movie.MoviePeople!);
-            await AddPeopleByRole(movie, "director", selectedDirectors);
-            await AddPeopleByRole(movie, "producer", selectedProducers);
-            await AddPeopleByRole(movie, "writer", selectedWriters);
-            await AddPeopleByRole(movie, "actor", selectedActors);
+
+            var positionIds = await _lookupRepository.GetAllPositionIdsAsync();
+            AddPeopleByRole(movie, positionIds.GetValueOrDefault("director"), selectedDirectors);
+            AddPeopleByRole(movie, positionIds.GetValueOrDefault("producer"), selectedProducers);
+            AddPeopleByRole(movie, positionIds.GetValueOrDefault("writer"), selectedWriters);
+            AddPeopleByRole(movie, positionIds.GetValueOrDefault("actor"), selectedActors);
 
             // replace all category links
             _repository.RemoveCategories(movie.MovieCategory!);
@@ -83,17 +89,17 @@ namespace MovieMVC.Services
 
         public List<NamesLU> GetAllNames()
         {
-            return _repository.GetAllNames();
+            return _lookupRepository.GetAllNames();
         }
 
         public List<NamesLU> GetAllNamesWithMovieCount()
         {
-            return _repository.GetAllNamesWithMovieCount();
+            return _lookupRepository.GetAllNamesWithMovieCount();
         }
 
         public List<CategoryLU> GetAllCategories()
         {
-            return _repository.GetAllCategories();
+            return _lookupRepository.GetAllCategories();
         }
 
         public async Task MergeNamesAsync(int targetId, List<int> sourceIds)
@@ -126,12 +132,9 @@ namespace MovieMVC.Services
             return await _repository.DeleteNameAsync(id);
         }
 
-        private async Task AddPeopleByRole(Movie movie, string positionName, int[]? selectedIds)
+        private void AddPeopleByRole(Movie movie, int positionId, int[]? selectedIds)
         {
-            if (selectedIds == null || selectedIds.Length == 0) return;
-
-            var posId = await _repository.GetPositionIdAsync(positionName);
-            if (posId == 0) return;
+            if (selectedIds == null || selectedIds.Length == 0 || positionId == 0) return;
 
             foreach (var nameId in selectedIds.Distinct())
             {
@@ -139,7 +142,7 @@ namespace MovieMVC.Services
                 {
                     Movie = movie,
                     NamesId = nameId,
-                    PositionId = posId
+                    PositionId = positionId
                 });
             }
         }

@@ -8,14 +8,22 @@ namespace MovieMVC.Services
     public class HomeService : IHomeService
     {
         private readonly IHomeRepository _repository;
+        private readonly ILookupRepository _lookupRepository;
 
-        public HomeService(IHomeRepository repository)
+        public HomeService(IHomeRepository repository, ILookupRepository lookupRepository)
         {
             _repository = repository;
+            _lookupRepository = lookupRepository;
         }
 
         public List<MovieDto> GetMovies(string? search, string? sort, bool desc = false)
         {
+            var positionIds = _lookupRepository.GetAllPositionIds();
+            var directorId = positionIds.GetValueOrDefault("director");
+            var producerId = positionIds.GetValueOrDefault("producer");
+            var writerId = positionIds.GetValueOrDefault("writer");
+            var actorId = positionIds.GetValueOrDefault("actor");
+
             var query = _repository.GetAllWithIncludes(search);
 
             Expression<Func<Movie, object?>> ByPosition(int positionId) =>
@@ -28,10 +36,10 @@ namespace MovieMVC.Services
             Expression<Func<Movie, object?>> keySelector = sort switch
             {
                 "title" => m => m.Title,
-                "director" => ByPosition(1),
-                "producer" => ByPosition(2),
-                "writer" => ByPosition(3),
-                "actor" => ByPosition(4),
+                "director" => ByPosition(directorId),
+                "producer" => ByPosition(producerId),
+                "writer" => ByPosition(writerId),
+                "actor" => ByPosition(actorId),
                 "category" => m => m.MovieCategory
                     .OrderBy(mc => mc.Category!.Category)
                     .Select(mc => mc.Category!.Category)
@@ -43,20 +51,20 @@ namespace MovieMVC.Services
                 ? query.OrderByDescending(keySelector)
                 : query.OrderBy(keySelector);
 
-            return sorted.Select(m => MapToDto(m)).ToList();
+            return sorted.Select(m => MapToDto(m, directorId, producerId, writerId, actorId)).ToList();
         }
 
-        private static MovieDto MapToDto(Movie m)
+        private static MovieDto MapToDto(Movie m, int directorId, int producerId, int writerId, int actorId)
         {
             return new MovieDto
             {
                 Id = m.Id,
                 Title = m.Title,
                 Description = m.Description,
-                Actors = GetNamesByPosition(m.MoviePeople, 4),
-                Directors = GetNamesByPosition(m.MoviePeople, 1),
-                Writers = GetNamesByPosition(m.MoviePeople, 3),
-                Producers = GetNamesByPosition(m.MoviePeople, 2),
+                Actors = GetNamesByPosition(m.MoviePeople, actorId),
+                Directors = GetNamesByPosition(m.MoviePeople, directorId),
+                Writers = GetNamesByPosition(m.MoviePeople, writerId),
+                Producers = GetNamesByPosition(m.MoviePeople, producerId),
                 Categories = m.MovieCategory?
                     .Select(mc => mc.Category?.Category ?? "").ToList() ?? []
             };

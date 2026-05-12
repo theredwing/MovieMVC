@@ -9,8 +9,9 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllersWithViews();
 // use SQL Server database named 'Movies' (connection string uses localdb by default)
 var connectionString = builder.Configuration.GetConnectionString("Movies")
-                       ?? "Server=(localdb)\\mssqllocaldb;Database=Movies;Trusted_Connection=True;MultipleActiveResultSets=true;Connect Timeout=60";
+                       ?? throw new InvalidOperationException("Connection string 'Movies' is not configured.");
 builder.Services.AddDbContext<AppDbContext>(o => o.UseSqlServer(connectionString, sql => sql.CommandTimeout(60)));
+builder.Services.AddScoped<ILookupRepository, LookupRepository>();
 builder.Services.AddScoped<IHomeRepository, HomeRepository>();
 builder.Services.AddScoped<IHomeService, HomeService>();
 builder.Services.AddScoped<IMovieRepository, MovieRepository>();

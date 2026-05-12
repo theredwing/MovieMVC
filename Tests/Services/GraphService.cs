@@ -19,7 +19,8 @@ namespace Tests.Services
         private MovieMVC.Services.GraphService CreateService(AppDbContext context)
         {
             var repo = new GraphRepository(context);
-            return new MovieMVC.Services.GraphService(repo);
+            var lookupRepo = new MovieMVC.Repositories.LookupRepository(context);
+            return new MovieMVC.Services.GraphService(repo, lookupRepo);
         }
 
         private void SeedData(AppDbContext context)

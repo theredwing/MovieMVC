@@ -4,6 +4,7 @@
 	<TargetFramework>net10.0</TargetFramework>
 	<Nullable>enable</Nullable>
 	<ImplicitUsings>enable</ImplicitUsings>
+    <UserSecretsId>a547590c-519d-4833-9619-6f6da8bd8c32</UserSecretsId>
   </PropertyGroup>
 
   <!-- Exclude the Tests subfolder so it stays a separate project -->

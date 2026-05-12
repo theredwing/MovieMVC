@@ -1,16 +1,16 @@
-@model MovieMVC.Models.Movie
+@model MovieMVC.Models.ViewModels.MovieDetailsViewModel
 
 @{
     ViewData["Title"] = "Details";
 }
 
 <div class="movie-page home-header">
-<h2>@Model.Title</h2>
+<h2>@Model.Movie.Title</h2>
 
 <div>
-    <partial name="_MovieDetails" model="Model" />
+    <partial name="_MovieDetails" model="Model.Movie" />
 </div>
 
 <div>
-    <a class="btn btn-secondary" href="/Movies/Edit/@Model.Id?sort=@Context.Request.Query["sort"]&desc=@Context.Request.Query["desc"]&search=@Context.Request.Query["search"]">Edit</a>
-    <a class="btn btn-primary" href="/Home?sort=@Context.Request.Query["sort"]&desc=@Context.Request.Query["desc"]&search=@Context.Request.Query["search"]">Back to List</a>
+    <a class="btn btn-secondary" href="/Movies/Edit/@Model.Movie.Id?sort=@Model.Sort&desc=@Model.Desc&search=@Model.Search">Edit</a>
+    <a class="btn btn-primary" href="/Home?sort=@Model.Sort&desc=@Model.Desc&search=@Model.Search">Back to List</a>

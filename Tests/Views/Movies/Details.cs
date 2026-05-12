@@ -6,9 +6,10 @@ using Microsoft.Extensions.Logging.Abstractions;
 using MovieMVC.Controllers;
 using MovieMVC.Data;
 using MovieMVC.Models;
+using MovieMVC.Models.ViewModels;
 using MovieMVC.Repositories;
 using MovieMVC.Services;
-using Tests.Views.Home;
+using Tests.TestHelpers;
 using Xunit;
 
 namespace Tests.Views.Movies
@@ -26,7 +27,8 @@ namespace Tests.Views.Movies
         private MoviesController CreateController(AppDbContext context)
         {
             var repo = new MovieRepository(context);
-            var service = new MovieService(repo);
+            var lookupRepo = new LookupRepository(context);
+            var service = new MovieService(repo, lookupRepo);
             var controller = new MoviesController(service, NullLogger<MoviesController>.Instance);
             var httpContext = new DefaultHttpContext();
             var tempDataProvider = new TestTempDataProvider();
@@ -71,7 +73,7 @@ namespace Tests.Views.Movies
             var result = await controller.Details(1, null, null, null) as ViewResult;
 
             Assert.NotNull(result);
-            Assert.IsType<Movie>(result.Model);
+            Assert.IsType<MovieDetailsViewModel>(result.Model);
         }
 
         [Fact]
@@ -82,9 +84,9 @@ namespace Tests.Views.Movies
             var controller = CreateController(context);
 
             var result = await controller.Details(1, null, null, null) as ViewResult;
-            var model = result!.Model as Movie;
+            var viewModel = result!.Model as MovieDetailsViewModel;
 
-            Assert.Equal("Test Movie", model!.Title);
+            Assert.Equal("Test Movie", viewModel!.Movie.Title);
         }
 
         [Fact]
@@ -95,9 +97,9 @@ namespace Tests.Views.Movies
             var controller = CreateController(context);
 
             var result = await controller.Details(1, null, null, null) as ViewResult;
-            var model = result!.Model as Movie;
+            var viewModel = result!.Model as MovieDetailsViewModel;
 
-            Assert.Equal("A test film", model!.Description);
+            Assert.Equal("A test film", viewModel!.Movie.Description);
         }
 
         [Fact]
@@ -108,11 +110,12 @@ namespace Tests.Views.Movies
             var controller = CreateController(context);
 
             var result = await controller.Details(1, null, null, null) as ViewResult;
-            var model = result!.Model as Movie;
+            var viewModel = result!.Model as MovieDetailsViewModel;
+            var movie = viewModel!.Movie;
 
-            Assert.NotNull(model!.MoviePeople);
-            Assert.Single(model.MoviePeople);
-            Assert.Equal("Alice", model.MoviePeople[0].Name!.Name);
+            Assert.NotNull(movie.MoviePeople);
+            Assert.Single(movie.MoviePeople);
+            Assert.Equal("Alice", movie.MoviePeople[0].Name!.Name);
         }
 
         [Fact]
@@ -123,11 +126,12 @@ namespace Tests.Views.Movies
             var controller = CreateController(context);
 
             var result = await controller.Details(1, null, null, null) as ViewResult;
-            var model = result!.Model as Movie;
+            var viewModel = result!.Model as MovieDetailsViewModel;
+            var movie = viewModel!.Movie;
 
-            Assert.NotNull(model!.MovieCategory);
-            Assert.Single(model.MovieCategory);
-            Assert.Equal("Drama", model.MovieCategory[0].Category!.Category);
+            Assert.NotNull(movie.MovieCategory);
+            Assert.Single(movie.MovieCategory);
+            Assert.Equal("Drama", movie.MovieCategory[0].Category!.Category);
         }
 
         [Fact]

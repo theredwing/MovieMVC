@@ -6,9 +6,10 @@ using Microsoft.Extensions.Logging.Abstractions;
 using MovieMVC.Controllers;
 using MovieMVC.Data;
 using MovieMVC.Models;
+using MovieMVC.Models.ViewModels;
 using MovieMVC.Repositories;
 using MovieMVC.Services;
-using Tests.Views.Home;
+using Tests.TestHelpers;
 using Xunit;
 
 namespace Tests.Views.Shared
@@ -26,7 +27,8 @@ namespace Tests.Views.Shared
         private MoviesController CreateController(AppDbContext context)
         {
             var repo = new MovieRepository(context);
-            var service = new MovieService(repo);
+            var lookupRepo = new LookupRepository(context);
+            var service = new MovieService(repo, lookupRepo);
             var controller = new MoviesController(service, NullLogger<MoviesController>.Instance);
             var httpContext = new DefaultHttpContext();
             var tempDataProvider = new TestTempDataProvider();
@@ -73,9 +75,9 @@ namespace Tests.Views.Shared
             var controller = CreateController(context);
 
             var result = await controller.Details(1, null, null, null) as ViewResult;
-            var model = result!.Model as Movie;
+            var model = (result!.Model as MovieDetailsViewModel)!.Movie;
 
-            var directors = model!.MoviePeople!.Where(mp => mp.PositionId == 1).ToList();
+            var directors = model.MoviePeople!.Where(mp => mp.PositionId == 1).ToList();
             Assert.Equal(2, directors.Count);
             Assert.Contains(directors, d => d.Name!.Name == "Alice Director");
             Assert.Contains(directors, d => d.Name!.Name == "Eve Director2");
@@ -89,9 +91,9 @@ namespace Tests.Views.Shared
             var controller = CreateController(context);
 
             var result = await controller.Details(1, null, null, null) as ViewResult;
-            var model = result!.Model as Movie;
+            var model = (result!.Model as MovieDetailsViewModel)!.Movie;
 
-            var producers = model!.MoviePeople!.Where(mp => mp.PositionId == 2).ToList();
+            var producers = model.MoviePeople!.Where(mp => mp.PositionId == 2).ToList();
             Assert.Single(producers);
             Assert.Equal("Bob Producer", producers[0].Name!.Name);
         }
@@ -104,9 +106,9 @@ namespace Tests.Views.Shared
             var controller = CreateController(context);
 
             var result = await controller.Details(1, null, null, null) as ViewResult;
-            var model = result!.Model as Movie;
+            var model = (result!.Model as MovieDetailsViewModel)!.Movie;
 
-            var writers = model!.MoviePeople!.Where(mp => mp.PositionId == 3).ToList();
+            var writers = model.MoviePeople!.Where(mp => mp.PositionId == 3).ToList();
             Assert.Single(writers);
             Assert.Equal("Charlie Writer", writers[0].Name!.Name);
         }
@@ -119,9 +121,9 @@ namespace Tests.Views.Shared
             var controller = CreateController(context);
 
             var result = await controller.Details(1, null, null, null) as ViewResult;
-            var model = result!.Model as Movie;
+            var model = (result!.Model as MovieDetailsViewModel)!.Movie;
 
-            var actors = model!.MoviePeople!.Where(mp => mp.PositionId == 4).ToList();
+            var actors = model.MoviePeople!.Where(mp => mp.PositionId == 4).ToList();
             Assert.Single(actors);
             Assert.Equal("Diana Actor", actors[0].Name!.Name);
         }
@@ -134,9 +136,9 @@ namespace Tests.Views.Shared
             var controller = CreateController(context);
 
             var result = await controller.Details(1, null, null, null) as ViewResult;
-            var model = result!.Model as Movie;
+            var model = (result!.Model as MovieDetailsViewModel)!.Movie;
 
-            var categories = model!.MovieCategory!;
+            var categories = model.MovieCategory!;
             Assert.Equal(2, categories.Count);
             Assert.Contains(categories, c => c.Category!.Category == "Drama");
             Assert.Contains(categories, c => c.Category!.Category == "Action");
@@ -150,9 +152,9 @@ namespace Tests.Views.Shared
             var controller = CreateController(context);
 
             var result = await controller.Details(1, null, null, null) as ViewResult;
-            var model = result!.Model as Movie;
+            var model = (result!.Model as MovieDetailsViewModel)!.Movie;
 
-            Assert.Equal("Full Movie", model!.Title);
+            Assert.Equal("Full Movie", model.Title);
             Assert.Equal("A complete test film", model.Description);
         }
 
@@ -165,9 +167,9 @@ namespace Tests.Views.Shared
             var controller = CreateController(context);
 
             var result = await controller.Details(1, null, null, null) as ViewResult;
-            var model = result!.Model as Movie;
+            var model = (result!.Model as MovieDetailsViewModel)!.Movie;
 
-            Assert.NotNull(model!.MoviePeople);
+            Assert.NotNull(model.MoviePeople);
             Assert.Empty(model.MoviePeople);
         }
 
@@ -180,9 +182,9 @@ namespace Tests.Views.Shared
             var controller = CreateController(context);
 
             var result = await controller.Details(1, null, null, null) as ViewResult;
-            var model = result!.Model as Movie;
+            var model = (result!.Model as MovieDetailsViewModel)!.Movie;
 
-            Assert.NotNull(model!.MovieCategory);
+            Assert.NotNull(model.MovieCategory);
             Assert.Empty(model.MovieCategory);
         }
 
@@ -194,9 +196,9 @@ namespace Tests.Views.Shared
             var controller = CreateController(context);
 
             var result = await controller.Delete(1, null, null, null) as ViewResult;
-            var model = result!.Model as Movie;
+            var model = (result!.Model as MovieDetailsViewModel)!.Movie;
 
-            Assert.NotNull(model!.MoviePeople);
+            Assert.NotNull(model.MoviePeople);
             Assert.Equal(5, model.MoviePeople.Count);
             Assert.NotNull(model.MovieCategory);
             Assert.Equal(2, model.MovieCategory.Count);

@@ -35,7 +35,7 @@ namespace MovieMVC.Controllers
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error loading movie index");
-                TempData["ErrorMessage"] = $"An error occurred loading movies: {ex.Message}";
+                TempData["ErrorMessage"] = "An unexpected error occurred loading movies. Please try again.";
                 return View(new MovieIndexViewModel());
             }
         }

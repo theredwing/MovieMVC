@@ -25,7 +25,7 @@ namespace MovieMVC.Controllers
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error loading graph data");
-                TempData["ErrorMessage"] = $"An error occurred loading graph data: {ex.Message}";
+                TempData["ErrorMessage"] = "An unexpected error occurred loading graph data. Please try again.";
                 return View(new GraphViewModel());
             }
         }

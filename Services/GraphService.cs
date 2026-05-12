@@ -7,10 +7,12 @@ namespace MovieMVC.Services
     public class GraphService : IGraphService
     {
         private readonly IGraphRepository _repository;
+        private readonly ILookupRepository _lookupRepository;
 
-        public GraphService(IGraphRepository repository)
+        public GraphService(IGraphRepository repository, ILookupRepository lookupRepository)
         {
             _repository = repository;
+            _lookupRepository = lookupRepository;
         }
 
         private static string? GetPositionName(string type) => type switch
@@ -29,9 +31,11 @@ namespace MovieMVC.Services
             if (string.IsNullOrEmpty(selectedType))
                 return vm;
 
+            int positionId = 0;
+
             if (selectedType == "Categories")
             {
-                var categories = _repository.GetAllCategories();
+                var categories = _lookupRepository.GetAllCategories();
                 vm.AvailableItems = categories
                     .Select(c => new SelectListItem(c.Category, c.Id.ToString()))
                     .ToList();
@@ -41,7 +45,8 @@ namespace MovieMVC.Services
                 var positionName = GetPositionName(selectedType);
                 if (positionName == null) return vm;
 
-                var positionId = _repository.GetPositionId(positionName);
+                var positionIds = _lookupRepository.GetAllPositionIds();
+                positionId = positionIds.GetValueOrDefault(positionName);
                 if (positionId == 0) return vm;
 
                 var names = _repository.GetNamesByPosition(positionId);
@@ -63,8 +68,6 @@ namespace MovieMVC.Services
                 }
                 else
                 {
-                    var positionName = GetPositionName(selectedType)!;
-                    var positionId = _repository.GetPositionId(positionName);
                     counts = _repository.GetMovieCountsByPeople(ids, positionId);
                 }
 

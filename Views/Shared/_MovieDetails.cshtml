@@ -9,22 +9,22 @@
 
     <dt class="col-sm-3">Directors</dt>
     <dd class="col-sm-9">
-        @string.Join(", ", Model.MoviePeople?.Where(mp => mp.PositionId == 1).Select(mp => mp.Name?.Name) ?? [])
+        @string.Join(", ", Model.MoviePeople?.Where(mp => mp.Position?.Position?.ToLower() == "director").Select(mp => mp.Name?.Name) ?? [])
     </dd>
 
     <dt class="col-sm-3">Producers</dt>
     <dd class="col-sm-9">
-        @string.Join(", ", Model.MoviePeople?.Where(mp => mp.PositionId == 2).Select(mp => mp.Name?.Name) ?? [])
+        @string.Join(", ", Model.MoviePeople?.Where(mp => mp.Position?.Position?.ToLower() == "producer").Select(mp => mp.Name?.Name) ?? [])
     </dd>
 
     <dt class="col-sm-3">Writers</dt>
     <dd class="col-sm-9">
-        @string.Join(", ", Model.MoviePeople?.Where(mp => mp.PositionId == 3).Select(mp => mp.Name?.Name) ?? [])
+        @string.Join(", ", Model.MoviePeople?.Where(mp => mp.Position?.Position?.ToLower() == "writer").Select(mp => mp.Name?.Name) ?? [])
     </dd>
 
     <dt class="col-sm-3">Actors</dt>
     <dd class="col-sm-9">
-        @string.Join(", ", Model.MoviePeople?.Where(mp => mp.PositionId == 4).Select(mp => mp.Name?.Name) ?? [])
+        @string.Join(", ", Model.MoviePeople?.Where(mp => mp.Position?.Position?.ToLower() == "actor").Select(mp => mp.Name?.Name) ?? [])
     </dd>
 
     <dt class="col-sm-3">Categories</dt>

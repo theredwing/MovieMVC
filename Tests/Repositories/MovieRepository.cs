@@ -156,30 +156,6 @@ namespace Tests.Repositories
         }
 
         [Fact]
-        public async Task GetPositionIdAsync_ReturnsId_WhenExists()
-        {
-            using var context = CreateContext(nameof(GetPositionIdAsync_ReturnsId_WhenExists));
-            SeedBasicData(context);
-            var repo = new MovieMVC.Repositories.MovieRepository(context);
-
-            var id = await repo.GetPositionIdAsync("actor");
-
-            Assert.Equal(1, id);
-        }
-
-        [Fact]
-        public async Task GetPositionIdAsync_ReturnsZero_WhenNotFound()
-        {
-            using var context = CreateContext(nameof(GetPositionIdAsync_ReturnsZero_WhenNotFound));
-            SeedBasicData(context);
-            var repo = new MovieMVC.Repositories.MovieRepository(context);
-
-            var id = await repo.GetPositionIdAsync("nonexistent");
-
-            Assert.Equal(0, id);
-        }
-
-        [Fact]
         public async Task AddPerson_AddsMovieNamesPosition()
         {
             using var context = CreateContext(nameof(AddPerson_AddsMovieNamesPosition));
@@ -245,52 +221,6 @@ namespace Tests.Repositories
             await repo.SaveChangesAsync();
 
             Assert.Equal(1, await context.Movies.CountAsync());
-        }
-
-        [Fact]
-        public void GetAllNames_ReturnsOrderedNames()
-        {
-            using var context = CreateContext(nameof(GetAllNames_ReturnsOrderedNames));
-            context.Actors.Add(new NamesLU { Id = 2, Name = "Zara" });
-            context.Actors.Add(new NamesLU { Id = 3, Name = "Alice" });
-            context.SaveChanges();
-            var repo = new MovieMVC.Repositories.MovieRepository(context);
-
-            var names = repo.GetAllNames();
-
-            Assert.Equal(2, names.Count);
-            Assert.Equal("Alice", names[0].Name);
-            Assert.Equal("Zara", names[1].Name);
-        }
-
-        [Fact]
-        public void GetAllNamesWithMovieCount_ReturnsNamesWithMoviePeople()
-        {
-            using var context = CreateContext(nameof(GetAllNamesWithMovieCount_ReturnsNamesWithMoviePeople));
-            SeedBasicData(context);
-            var repo = new MovieMVC.Repositories.MovieRepository(context);
-
-            var names = repo.GetAllNamesWithMovieCount();
-
-            Assert.Single(names);
-            Assert.NotNull(names[0].MoviePeople);
-            Assert.Single(names[0].MoviePeople);
-        }
-
-        [Fact]
-        public void GetAllCategories_ReturnsOrderedCategories()
-        {
-            using var context = CreateContext(nameof(GetAllCategories_ReturnsOrderedCategories));
-            context.Categories.Add(new CategoryLU { Id = 1, Category = "Sci-Fi" });
-            context.Categories.Add(new CategoryLU { Id = 2, Category = "Action" });
-            context.SaveChanges();
-            var repo = new MovieMVC.Repositories.MovieRepository(context);
-
-            var categories = repo.GetAllCategories();
-
-            Assert.Equal(2, categories.Count);
-            Assert.Equal("Action", categories[0].Category);
-            Assert.Equal("Sci-Fi", categories[1].Category);
         }
 
         [Fact]

@@ -1,4 +1,4 @@
-@model List<MovieMVC.Models.NamesLU>
+@model MovieMVC.Models.ViewModels.NamesViewModel
 
 @{
     ViewData["Title"] = "Names Maintenance";
@@ -32,7 +32,7 @@
             </tr>
         </thead>
         <tbody>
-            @foreach (var nameEntry in Model)
+            @foreach (var nameEntry in Model.Names)
             {
                 <tr data-id="@nameEntry.Id">
                     <td>
@@ -44,7 +44,7 @@
                         </form>
                     </td>
                     <td>
-                        @if (nameEntry.MoviePeople != null && nameEntry.MoviePeople.Count > 0)
+                        @if (!nameEntry.CanDelete)
                         {
                             <button type="button" class="btn btn-sm btn-danger" onclick="alert('You cannot delete this Name as it is associated with at least one movie.');">Delete</button>
                         }
@@ -65,7 +65,7 @@
     </div>
 
     <div class="mt-3">
-        <a class="btn btn-secondary" href="/Home?sort=@Context.Request.Query["sort"]&desc=@Context.Request.Query["desc"]&search=@Context.Request.Query["search"]">Back to List</a>
+        <a class="btn btn-secondary" href="/Home?sort=@Model.Sort&desc=@Model.Desc&search=@Model.Search">Back to List</a>
     </div>
 </div>
 
@@ -98,7 +98,7 @@
         }
     });
 
-    var focusId = '@(TempData["FocusNameId"])';
+    var focusId = '@Model.FocusNameId';
     if (focusId) {
         var container = document.getElementById('namesTableContainer');
         var row = container.querySelector('tr[data-id="' + focusId + '"]');

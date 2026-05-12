@@ -16,6 +16,7 @@ namespace MovieMVC.Repositories
         public IQueryable<Movie> GetAllWithIncludes(string? search)
         {
             var query = _context.Movies
+                .AsNoTracking()
                 .Include(m => m.MoviePeople).ThenInclude(mp => mp.Name)
                 .Include(m => m.MovieCategory).ThenInclude(mc => mc.Category)
                 .AsQueryable();

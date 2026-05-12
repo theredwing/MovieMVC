@@ -26,7 +26,7 @@ public class MoviesController : Controller
         catch (Exception ex)
         {
             _logger.LogError(ex, "Error loading Create form");
-            TempData["ErrorMessage"] = $"An error occurred: {ex.Message}";
+            TempData["ErrorMessage"] = "An unexpected error occurred. Please try again.";
             return RedirectToAction("Index", "Home", new { sort, desc, search });
         }
     }
@@ -51,7 +51,7 @@ public class MoviesController : Controller
         catch (Exception ex)
         {
             _logger.LogError(ex, "Error creating movie");
-            TempData["ErrorMessage"] = $"An error occurred creating the movie: {ex.Message}";
+            TempData["ErrorMessage"] = "An unexpected error occurred while creating the movie. Please try again.";
             return View(BuildFormViewModel(movie, selectedDirectors, selectedProducers, selectedWriters, selectedActors, selectedCategories));
         }
     }
@@ -69,7 +69,7 @@ public class MoviesController : Controller
         catch (Exception ex)
         {
             _logger.LogError(ex, "Error loading Edit form for movie {Id}", id);
-            TempData["ErrorMessage"] = $"An error occurred: {ex.Message}";
+            TempData["ErrorMessage"] = "An unexpected error occurred. Please try again.";
             return RedirectToAction("Index", "Home", new { sort, desc, search });
         }
     }
@@ -99,7 +99,7 @@ public class MoviesController : Controller
         catch (Exception ex)
         {
             _logger.LogError(ex, "Error updating movie {Id}", id);
-            TempData["ErrorMessage"] = $"An error occurred updating the movie: {ex.Message}";
+            TempData["ErrorMessage"] = "An unexpected error occurred while updating the movie. Please try again.";
             return View(BuildFormViewModel(movie, selectedDirectors, selectedProducers, selectedWriters, selectedActors, selectedCategories));
         }
     }
@@ -111,12 +111,18 @@ public class MoviesController : Controller
             var movie = await _movieService.GetMovieDetailsAsync(id);
             if (movie == null) return NotFound();
 
-            return View(movie);
+            return View(new MovieDetailsViewModel
+            {
+                Movie = movie,
+                Sort = sort,
+                Desc = desc?.ToString(),
+                Search = search
+            });
         }
         catch (Exception ex)
         {
             _logger.LogError(ex, "Error loading Details for movie {Id}", id);
-            TempData["ErrorMessage"] = $"An error occurred: {ex.Message}";
+            TempData["ErrorMessage"] = "An unexpected error occurred. Please try again.";
             return RedirectToAction("Index", "Home", new { sort, desc, search });
         }
     }
@@ -127,12 +133,18 @@ public class MoviesController : Controller
         {
             var movie = await _movieService.GetMovieDetailsAsync(id);
             if (movie == null) return NotFound();
-            return View(movie);
+            return View(new MovieDetailsViewModel
+            {
+                Movie = movie,
+                Sort = sort,
+                Desc = desc?.ToString(),
+                Search = search
+            });
         }
         catch (Exception ex)
         {
             _logger.LogError(ex, "Error loading Delete for movie {Id}", id);
-            TempData["ErrorMessage"] = $"An error occurred: {ex.Message}";
+            TempData["ErrorMessage"] = "An unexpected error occurred. Please try again.";
             return RedirectToAction("Index", "Home", new { sort, desc, search });
         }
     }
@@ -151,7 +163,7 @@ public class MoviesController : Controller
         catch (Exception ex)
         {
             _logger.LogError(ex, "Error deleting movie {Id}", id);
-            TempData["ErrorMessage"] = $"An error occurred deleting the movie: {ex.Message}";
+            TempData["ErrorMessage"] = "An unexpected error occurred while deleting the movie. Please try again.";
             return RedirectToAction("Index", "Home", new { sort, desc, search });
         }
     }
@@ -166,7 +178,7 @@ public class MoviesController : Controller
         catch (Exception ex)
         {
             _logger.LogError(ex, "Error loading MergeNames form");
-            TempData["ErrorMessage"] = $"An error occurred: {ex.Message}";
+            TempData["ErrorMessage"] = "An unexpected error occurred. Please try again.";
             return RedirectToAction("Index", "Home");
         }
     }
@@ -205,7 +217,7 @@ public class MoviesController : Controller
         catch (Exception ex)
         {
             _logger.LogError(ex, "Error merging names");
-            TempData["ErrorMessage"] = $"An error occurred merging names: {ex.Message}";
+            TempData["ErrorMessage"] = "An unexpected error occurred while merging names. Please try again.";
             return View(BuildMergeNamesViewModel());
         }
     }
@@ -214,12 +226,26 @@ public class MoviesController : Controller
     {
         try
         {
-            return View(_movieService.GetAllNamesWithMovieCount());
+            var names = _movieService.GetAllNamesWithMovieCount();
+            var viewModel = new NamesViewModel
+            {
+                Names = names.Select(n => new NameEntry
+                {
+                    Id = n.Id,
+                    Name = n.Name,
+                    CanDelete = n.MoviePeople == null || n.MoviePeople.Count == 0
+                }).ToList(),
+                Sort = sort,
+                Desc = desc?.ToString(),
+                Search = search,
+                FocusNameId = TempData["FocusNameId"]?.ToString()
+            };
+            return View(viewModel);
         }
         catch (Exception ex)
         {
             _logger.LogError(ex, "Error loading Names Maintenance");
-            TempData["ErrorMessage"] = $"An error occurred: {ex.Message}";
+            TempData["ErrorMessage"] = "An unexpected error occurred. Please try again.";
             return RedirectToAction("Index", "Home", new { sort, desc, search });
         }
     }
@@ -245,7 +271,7 @@ public class MoviesController : Controller
         catch (Exception ex)
         {
             _logger.LogError(ex, "Error adding name");
-            TempData["ErrorMessage"] = $"An error occurred adding the name: {ex.Message}";
+            TempData["ErrorMessage"] = "An unexpected error occurred while adding the name. Please try again.";
             return RedirectToAction(nameof(Names), new { sort, desc, search });
         }
     }
@@ -281,7 +307,7 @@ public class MoviesController : Controller
         catch (Exception ex)
         {
             _logger.LogError(ex, "Error editing name {Id}", id);
-            TempData["ErrorMessage"] = $"An error occurred updating the name: {ex.Message}";
+            TempData["ErrorMessage"] = "An unexpected error occurred while updating the name. Please try again.";
             TempData["FocusNameId"] = id;
             return RedirectToAction(nameof(Names), new { sort, desc, search });
         }
@@ -303,7 +329,7 @@ public class MoviesController : Controller
         catch (Exception ex)
         {
             _logger.LogError(ex, "Error deleting name {Id}", id);
-            TempData["ErrorMessage"] = $"An error occurred deleting the name: {ex.Message}";
+            TempData["ErrorMessage"] = "An unexpected error occurred while deleting the name. Please try again.";
             return RedirectToAction(nameof(Names), new { sort, desc, search });
         }
     }

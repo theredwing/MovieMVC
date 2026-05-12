@@ -9,6 +9,7 @@ using MovieMVC.Models;
 using MovieMVC.Models.ViewModels;
 using MovieMVC.Repositories;
 using MovieMVC.Services;
+using Tests.TestHelpers;
 using Xunit;
 
 namespace Tests.Views.Graphs
@@ -26,7 +27,8 @@ namespace Tests.Views.Graphs
         private GraphsController CreateController(AppDbContext context)
         {
             var repo = new GraphRepository(context);
-            var service = new GraphService(repo);
+            var lookupRepo = new LookupRepository(context);
+            var service = new GraphService(repo, lookupRepo);
             var controller = new GraphsController(service, NullLogger<GraphsController>.Instance);
             var httpContext = new DefaultHttpContext();
             var tempDataProvider = new TestTempDataProvider();
@@ -291,7 +293,8 @@ namespace Tests.Views.Graphs
             using var context = CreateContext(nameof(Index_SetsErrorMessage_WhenExceptionOccurs));
             context.Dispose(); // force error
             var repo = new GraphRepository(context);
-            var service = new GraphService(repo);
+            var lookupRepo = new LookupRepository(context);
+            var service = new GraphService(repo, lookupRepo);
             var controller = new GraphsController(service, NullLogger<GraphsController>.Instance);
             var httpContext = new DefaultHttpContext();
             var tempDataProvider = new TestTempDataProvider();
@@ -308,7 +311,8 @@ namespace Tests.Views.Graphs
             using var context = CreateContext(nameof(Index_ReturnsEmptyModel_WhenExceptionOccurs));
             context.Dispose(); // force error
             var repo = new GraphRepository(context);
-            var service = new GraphService(repo);
+            var lookupRepo = new LookupRepository(context);
+            var service = new GraphService(repo, lookupRepo);
             var controller = new GraphsController(service, NullLogger<GraphsController>.Instance);
             var httpContext = new DefaultHttpContext();
             var tempDataProvider = new TestTempDataProvider();
@@ -320,12 +324,5 @@ namespace Tests.Views.Graphs
             Assert.NotNull(model);
             Assert.Empty(model.AvailableItems);
         }
-    }
-
-    internal class TestTempDataProvider : ITempDataProvider
-    {
-        private Dictionary<string, object?> _data = new();
-        public IDictionary<string, object?> LoadTempData(HttpContext context) => _data;
-        public void SaveTempData(HttpContext context, IDictionary<string, object?> values) => _data = new(values);
     }
 }

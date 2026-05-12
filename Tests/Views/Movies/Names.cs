@@ -6,9 +6,10 @@ using Microsoft.Extensions.Logging.Abstractions;
 using MovieMVC.Controllers;
 using MovieMVC.Data;
 using MovieMVC.Models;
+using MovieMVC.Models.ViewModels;
 using MovieMVC.Repositories;
 using MovieMVC.Services;
-using Tests.Views.Home;
+using Tests.TestHelpers;
 using Xunit;
 
 namespace Tests.Views.Movies
@@ -26,7 +27,8 @@ namespace Tests.Views.Movies
         private MoviesController CreateController(AppDbContext context)
         {
             var repo = new MovieRepository(context);
-            var service = new MovieService(repo);
+            var lookupRepo = new LookupRepository(context);
+            var service = new MovieService(repo, lookupRepo);
             var controller = new MoviesController(service, NullLogger<MoviesController>.Instance);
             var httpContext = new DefaultHttpContext();
             var tempDataProvider = new TestTempDataProvider();
@@ -65,7 +67,7 @@ namespace Tests.Views.Movies
             var result = controller.Names(null, null, null) as ViewResult;
 
             Assert.NotNull(result);
-            Assert.IsType<List<NamesLU>>(result.Model);
+            Assert.IsType<NamesViewModel>(result.Model);
         }
 
         [Fact]
@@ -76,9 +78,9 @@ namespace Tests.Views.Movies
             var controller = CreateController(context);
 
             var result = controller.Names(null, null, null) as ViewResult;
-            var model = result!.Model as List<NamesLU>;
+            var viewModel = result!.Model as NamesViewModel;
 
-            Assert.Equal(3, model!.Count);
+            Assert.Equal(3, viewModel!.Names.Count);
         }
 
         [Fact]
@@ -89,11 +91,11 @@ namespace Tests.Views.Movies
             var controller = CreateController(context);
 
             var result = controller.Names(null, null, null) as ViewResult;
-            var model = result!.Model as List<NamesLU>;
+            var viewModel = result!.Model as NamesViewModel;
 
-            Assert.Equal("Alice", model![0].Name);
-            Assert.Equal("Bob", model[1].Name);
-            Assert.Equal("Charlie", model[2].Name);
+            Assert.Equal("Alice", viewModel!.Names[0].Name);
+            Assert.Equal("Bob", viewModel.Names[1].Name);
+            Assert.Equal("Charlie", viewModel.Names[2].Name);
         }
 
         [Fact]

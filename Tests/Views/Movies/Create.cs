@@ -9,7 +9,7 @@ using MovieMVC.Models;
 using MovieMVC.Models.ViewModels;
 using MovieMVC.Repositories;
 using MovieMVC.Services;
-using Tests.Views.Home;
+using Tests.TestHelpers;
 using Xunit;
 
 namespace Tests.Views.Movies
@@ -27,7 +27,8 @@ namespace Tests.Views.Movies
         private MoviesController CreateController(AppDbContext context)
         {
             var repo = new MovieRepository(context);
-            var service = new MovieService(repo);
+            var lookupRepo = new LookupRepository(context);
+            var service = new MovieService(repo, lookupRepo);
             var controller = new MoviesController(service, NullLogger<MoviesController>.Instance);
             var httpContext = new DefaultHttpContext();
             var tempDataProvider = new TestTempDataProvider();

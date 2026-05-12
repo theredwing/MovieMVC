@@ -9,6 +9,7 @@ using MovieMVC.Models;
 using MovieMVC.Models.ViewModels;
 using MovieMVC.Repositories;
 using MovieMVC.Services;
+using Tests.TestHelpers;
 using Xunit;
 
 namespace Tests.Views.Home
@@ -26,7 +27,8 @@ namespace Tests.Views.Home
         private HomeController CreateController(AppDbContext context)
         {
             var repo = new HomeRepository(context);
-            var service = new HomeService(repo);
+            var lookupRepo = new LookupRepository(context);
+            var service = new HomeService(repo, lookupRepo);
             var controller = new HomeController(service, NullLogger<HomeController>.Instance);
             var httpContext = new DefaultHttpContext();
             var tempDataProvider = new TestTempDataProvider();
@@ -271,12 +273,5 @@ namespace Tests.Views.Home
 
             Assert.Equal("Home Page", result!.ViewData["Title"]);
         }
-    }
-
-    internal class TestTempDataProvider : ITempDataProvider
-    {
-        private Dictionary<string, object?> _data = new();
-        public IDictionary<string, object?> LoadTempData(HttpContext context) => _data;
-        public void SaveTempData(HttpContext context, IDictionary<string, object?> values) => _data = new(values);
     }
 }

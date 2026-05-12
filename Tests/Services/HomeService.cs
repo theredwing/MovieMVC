@@ -19,7 +19,8 @@ namespace Tests.Services
         private MovieMVC.Services.HomeService CreateService(AppDbContext context)
         {
             var repo = new HomeRepository(context);
-            return new MovieMVC.Services.HomeService(repo);
+            var lookupRepo = new MovieMVC.Repositories.LookupRepository(context);
+            return new MovieMVC.Services.HomeService(repo, lookupRepo);
         }
 
         private void SeedData(AppDbContext context)

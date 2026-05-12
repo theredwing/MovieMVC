@@ -19,7 +19,8 @@ namespace Tests.Services
         private MovieMVC.Services.MovieService CreateService(AppDbContext context)
         {
             var repo = new MovieRepository(context);
-            return new MovieMVC.Services.MovieService(repo);
+            var lookupRepo = new MovieMVC.Repositories.LookupRepository(context);
+            return new MovieMVC.Services.MovieService(repo, lookupRepo);
         }
 
         private void SeedPositions(AppDbContext context)

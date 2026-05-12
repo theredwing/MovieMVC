@@ -16,6 +16,7 @@ namespace MovieMVC.Repositories
         public async Task<Movie?> GetWithDetailsAsync(int id)
         {
             return await _context.Movies
+                .AsNoTracking()
                 .Include(m => m.MoviePeople).ThenInclude(mp => mp.Name)
                 .Include(m => m.MoviePeople).ThenInclude(mp => mp.Position)
                 .Include(m => m.MovieCategory).ThenInclude(mc => mc.Category)
@@ -43,14 +44,6 @@ namespace MovieMVC.Repositories
         public void Remove(Movie movie)
         {
             _context.Movies.Remove(movie);
-        }
-
-        public async Task<int> GetPositionIdAsync(string positionName)
-        {
-            return await _context.Positions
-                .Where(p => p.Position.ToLower() == positionName)
-                .Select(p => p.Id)
-                .FirstOrDefaultAsync();
         }
 
         public void AddPerson(MovieNamesPosition person)
@@ -111,21 +104,6 @@ namespace MovieMVC.Repositories
             }
 
             await _context.SaveChangesAsync();
-        }
-
-        public List<NamesLU> GetAllNames()
-        {
-            return _context.Actors.OrderBy(n => n.Name).ToList();
-        }
-
-        public List<NamesLU> GetAllNamesWithMovieCount()
-        {
-            return _context.Actors.Include(n => n.MoviePeople).OrderBy(n => n.Name).ToList();
-        }
-
-        public List<CategoryLU> GetAllCategories()
-        {
-            return _context.Categories.OrderBy(c => c.Category).ToList();
         }
 
         public async Task<NamesLU?> GetNameByIdAsync(int id)

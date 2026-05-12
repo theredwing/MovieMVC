@@ -1,4 +1,4 @@
-@model MovieMVC.Models.Movie
+@model MovieMVC.Models.ViewModels.MovieDetailsViewModel
 
 @{
     ViewData["Title"] = "Delete";
@@ -8,12 +8,14 @@
 <h2>Are you sure you want to delete this movie?</h2>
 
 <div>
-    <partial name="_MovieDetails" model="Model" />
+    <partial name="_MovieDetails" model="Model.Movie" />
 </div>
 
 <form asp-action="Delete" method="post">
-    <input type="hidden" asp-for="Id" />
-    <partial name="_SortSearchHidden" />
+    <input type="hidden" name="Id" value="@Model.Movie.Id" />
+    <input type="hidden" name="sort" value="@Model.Sort" />
+    <input type="hidden" name="desc" value="@Model.Desc" />
+    <input type="hidden" name="search" value="@Model.Search" />
     <button type="submit" class="btn btn-danger">Delete</button>
-    <a class="btn btn-secondary" href="/Home?sort=@Context.Request.Query["sort"]&desc=@Context.Request.Query["desc"]&search=@Context.Request.Query["search"]">Cancel</a>
+    <a class="btn btn-secondary" href="/Home?sort=@Model.Sort&desc=@Model.Desc&search=@Model.Search">Cancel</a>
     </form>
